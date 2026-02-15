@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/Favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kami Dōbutsu</title>
+  </head>
+  <body>
+
+  <canvas id="bg-canvas"></canvas>
+  <canvas id="star-canvas"></canvas>
+  <canvas id="moon-canvas"></canvas>
+  <canvas id="cloud-canvas"></canvas>
+  <canvas id="ray-canvas"></canvas>
+  <canvas id="glow-canvas"></canvas>
+  <canvas id="fg-canvas"></canvas>
+  <div id="vignette"></div>
+
+  <div id="root"></div>
+
+  <div id="ui-overlay">
+  </div>
+
+  <!-- Enhanced Torii Gate -->
+  <svg class="torii" width="420" height="300" viewBox="0 0 420 300">
+    <defs>
+      <linearGradient id="toriiGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#d4b0ff" stop-opacity="0.9"/>
+        <stop offset="40%" stop-color="#8b60c0" stop-opacity="0.7"/>
+        <stop offset="100%" stop-color="#3a1a5e" stop-opacity="0.5"/>
+      </linearGradient>
+      <linearGradient id="toriiGrad2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#e0c8ff" stop-opacity="0.95"/>
+        <stop offset="100%" stop-color="#6a3a9e" stop-opacity="0.6"/>
+      </linearGradient>
+    </defs>
+    <rect x="85" y="55" width="18" height="245" rx="3" fill="url(#toriiGrad)"/>
+    <rect x="82" y="55" width="24" height="8" rx="2" fill="url(#toriiGrad2)"/>
+    <rect x="317" y="55" width="18" height="245" rx="3" fill="url(#toriiGrad)"/>
+    <rect x="314" y="55" width="24" height="8" rx="2" fill="url(#toriiGrad2)"/>
+    <path d="M50 18 Q60 8 75 10 L345 10 Q360 8 370 18 L365 30 Q355 24 345 26 L75 26 Q65 24 55 30 Z" fill="url(#toriiGrad2)"/>
+    <rect x="60" y="32" width="300" height="14" rx="4" fill="url(#toriiGrad)"/>
+    <rect x="90" y="72" width="240" height="10" rx="3" fill="url(#toriiGrad)"/>
+    <rect x="175" y="40" width="70" height="30" rx="4" fill="url(#toriiGrad)" stroke="#c8a0ff" stroke-width="1" stroke-opacity="0.3"/>
+    <circle cx="94" cy="52" r="4" fill="#c8a0ff" opacity="0.3"/>
+    <circle cx="326" cy="52" r="4" fill="#c8a0ff" opacity="0.3"/>
+  </svg>
+
+<script>
+(() => {
+  'use strict';
+  const SimplexNoise = (() => {
+    const F2 = 0.5*(Math.sqrt(3)-1), G2 = (3-Math.sqrt(3))/6;
+    const F3 = 1/3, G3 = 1/6;
+    const grad3 = [[1,1,0],[-1,1,0],[1,-1,0],[-1,-1,0],
+                   [1,0,1],[-1,0,1],[1,0,-1],[-1,0,-1],
+                   [0,1,1],[0,-1,1],[0,1,-1],[0,-1,-1]];
+    const p = new Uint8Array(256);
+    for(let i=0;i<256;i++) p[i]=i;
+    for(let i=255;i>0;i--){const j=Math.floor(Math.random()*(i+1));[p[i],p[j]]=[p[j],p[i]];}
+    const perm=new Uint8Array(512), permMod12=new Uint8Array(512);
+    for(let i=0;i<512;i++){perm[i]=p[i&255];permMod12[i]=perm[i]%12;}
+    function dot2(g,x,y){return g[0]*x+g[1]*y;}
+    function dot3(g,x,y,z){return g[0]*x+g[1]*y+g[2]*z;}
+    return {
+      noise2D(x,y){
+        let n0,n1,n2;const s=(x+y)*F2;const i=Math.floor(x+s),j=Math.floor(y+s);
+        const t=(i+j)*G2;const X0=i-t,Y0=j-t;const x0=x-X0,y0=y-Y0;
+        let i1,j1;if(x0>y0){i1=1;j1=0;}else{i1=0;j1=1;}
+        const x1=x0-i1+G2,y1=y0-j1+G2,x2=x0-1+2*G2,y2=y0-1+2*G2;
+        const ii=i&255,jj=j&255;
+        const gi0=permMod12[ii+perm[jj]],gi1=permMod12[ii+i1+perm[jj+j1]],gi2=permMod12[ii+1+perm[jj+1]];
+        let t0=0.5-x0*x0-y0*y0;if(t0<0)n0=0;else{t0*=t0;n0=t0*t0*dot2(grad3[gi0],x0,y0);}
+        let t1=0.5-x1*x1-y1*y1;if(t1<0)n1=0;else{t1*=t1;n1=t1*t1*dot2(grad3[gi1],x1,y1);}
+        let t2=0.5-x2*x2-y2*y2;if(t2<0)n2=0;else{t2*=t2;n2=t2*t2*dot2(grad3[gi2],x2,y2);}
+        return 70*(n0+n1+n2);
+      },
+      noise3D(x,y,z){
+        let n0,n1,n2,n3;const s=(x+y+z)*F3;
+        const i=Math.floor(x+s),j=Math.floor(y+s),k=Math.floor(z+s);
+        const t=(i+j+k)*G3;const X0=i-t,Y0=j-t,Z0=k-t;
+        const x0=x-X0,y0=y-Y0,z0=z-Z0;
+        let i1,j1,k1,i2,j2,k2;
+        if(x0>=y0){if(y0>=z0){i1=1;j1=0;k1=0;i2=1;j2=1;k2=0;}
+        else if(x0>=z0){i1=1;j1=0;k1=0;i2=1;j2=0;k2=1;}
+        else{i1=0;j1=0;k1=1;i2=1;j2=0;k2=1;}}
+        else{if(y0<z0){i1=0;j1=0;k1=1;i2=0;j2=1;k2=1;}
+        else if(x0<z0){i1=0;j1=1;k1=0;i2=0;j2=1;k2=1;}
+        else{i1=0;j1=1;k1=0;i2=1;j2=1;k2=0;}}
+        const x1=x0-i1+G3,y1=y0-j1+G3,z1=z0-k1+G3;
+        const x2=x0-i2+2*G3,y2=y0-j2+2*G3,z2=z0-k2+2*G3;
+        const x3=x0-1+3*G3,y3=y0-1+3*G3,z3=z0-1+3*G3;
+        const ii=i&255,jj=j&255,kk=k&255;
+        const gi0=permMod12[ii+perm[jj+perm[kk]]];
+        const gi1=permMod12[ii+i1+perm[jj+j1+perm[kk+k1]]];
+        const gi2=permMod12[ii+i2+perm[jj+j2+perm[kk+k2]]];
+        const gi3=permMod12[ii+1+perm[jj+1+perm[kk+1]]];
+        let t0=0.6-x0*x0-y0*y0-z0*z0;if(t0<0)n0=0;else{t0*=t0;n0=t0*t0*dot3(grad3[gi0],x0,y0,z0);}
+        let t1=0.6-x1*x1-y1*y1-z1*z1;if(t1<0)n1=0;else{t1*=t1;n1=t1*t1*dot3(grad3[gi1],x1,y1,z1);}
+        let t2=0.6-x2*x2-y2*y2-z2*z2;if(t2<0)n2=0;else{t2*=t2;n2=t2*t2*dot3(grad3[gi2],x2,y2,z2);}
+        let t3=0.6-x3*x3-y3*y3-z3*z3;if(t3<0)n3=0;else{t3*=t3;n3=t3*t3*dot3(grad3[gi3],x3,y3,z3);}
+        return 32*(n0+n1+n2+n3);
+      }
+    };
+  })();
+
+  function fbm(x,y,z,octaves,lac,gain){let v=0,a=0.5,f=1;for(let i=0;i<octaves;i++){v+=a*SimplexNoise.noise3D(x*f,y*f,z*f);a*=gain;f*=lac;}return v;}
+  const CFG = {
+    CLOUD_LAYERS: [
+      { z:0.15, count:4, sizeMin:600, sizeMax:1100, speed:0.08, dir:1,  opacity:0.40, detail:6, scale:0.0012, yRange:[0.10,0.55] },
+      { z:0.30, count:5, sizeMin:450, sizeMax:850,  speed:0.14, dir:-1, opacity:0.35, detail:5, scale:0.0016, yRange:[0.08,0.60] },
+      { z:0.50, count:6, sizeMin:300, sizeMax:600,  speed:0.22, dir:1,  opacity:0.30, detail:5, scale:0.0022, yRange:[0.05,0.65] },
+      { z:0.70, count:7, sizeMin:200, sizeMax:450,  speed:0.35, dir:-1, opacity:0.25, detail:4, scale:0.003,  yRange:[0.10,0.70] },
+      { z:0.90, count:5, sizeMin:120, sizeMax:300,  speed:0.50, dir:1,  opacity:0.15, detail:4, scale:0.004,  yRange:[0.15,0.65] },
+    ],
+    LIGHT_DIR: { x:0.4, y:-0.6, z:0.65 },
+    LIGHT_COLOR: [220,200,255],
+    SHADOW_COLOR: [15,5,40],
+    AMBIENT: [50,25,90],
+    STARS: 320,
+    PARALLAX_STRENGTH: 25,
+    MOON: {
+      radius: 0.08,
+      coreColor: [255,252,245],
+      glowLayers: [
+        { radius: 1.8,  color: [255,250,240], alpha: 0.6  },
+        { radius: 3.0,  color: [240,230,255], alpha: 0.25 },
+        { radius: 5.5,  color: [200,180,255], alpha: 0.12 },
+        { radius: 9.0,  color: [160,120,230], alpha: 0.06 },
+        { radius: 15.0, color: [130,80,200],  alpha: 0.03 },
+        { radius: 25.0, color: [100,60,180],  alpha: 0.015 },
+      ]
+    }
+  };
+  const bgC    = document.getElementById('bg-canvas');
+  const starC  = document.getElementById('star-canvas');
+  const moonC  = document.getElementById('moon-canvas');
+  const cloudC = document.getElementById('cloud-canvas');
+  const rayC   = document.getElementById('ray-canvas');
+  const glowC  = document.getElementById('glow-canvas');
+  const fgC    = document.getElementById('fg-canvas');
+
+  const bgX    = bgC.getContext('2d');
+  const starX  = starC.getContext('2d');
+  const moonX  = moonC.getContext('2d');
+  const cloudX = cloudC.getContext('2d');
+  const rayX   = rayC.getContext('2d');
+  const glowX  = glowC.getContext('2d');
+  const fgX    = fgC.getContext('2d');
+
+  let W, H, dpr;
+  let mouseX = 0.5, mouseY = 0.5;
+  let targetMX = 0.5, targetMY = 0.5;
+  function getTitleCenter() {
+    const titleEl = document.querySelector('.title-main');
+    if (titleEl) {
+      const rect = titleEl.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      };
+    }
+    return { x: W * 0.5, y: H * 0.42 };
+  }
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    [bgC, starC, moonC, rayC, glowC].forEach(c => {
+      c.width = W * dpr; c.height = H * dpr;
+      c.style.width = W + 'px'; c.style.height = H + 'px';
+    });
+    bgX.setTransform(dpr,0,0,dpr,0,0);
+    starX.setTransform(dpr,0,0,dpr,0,0);
+    moonX.setTransform(dpr,0,0,dpr,0,0);
+    rayX.setTransform(dpr,0,0,dpr,0,0);
+    glowX.setTransform(dpr,0,0,dpr,0,0);
+
+    const cScale = 0.5;
+    cloudC.width = W*dpr*cScale; cloudC.height = H*dpr*cScale;
+    cloudC.style.width = W+'px'; cloudC.style.height = H+'px';
+    cloudX.setTransform(dpr*cScale,0,0,dpr*cScale,0,0);
+
+    fgC.width = W*dpr*0.5; fgC.height = H*dpr*0.5;
+    fgC.style.width = W+'px'; fgC.style.height = H+'px';
+    fgX.setTransform(dpr*0.5,0,0,dpr*0.5,0,0);
+
+    drawBackground();
+    initStars();
+  }
+  const rand  = (a,b) => Math.random()*(b-a)+a;
+  const pick  = arr => arr[Math.floor(Math.random()*arr.length)];
+  const clamp = (v,mn,mx) => Math.max(mn,Math.min(mx,v));
+  const lerp  = (a,b,t) => a+(b-a)*t;
+  const smoothstep = (e0,e1,x) => { const t=clamp((x-e0)/(e1-e0),0,1); return t*t*(3-2*t); };
+  function drawBackground() {
+    const gBase = bgX.createLinearGradient(0, 0, W, H);
+    gBase.addColorStop(0, '#0d1b1e');
+    gBase.addColorStop(0.35, '#0e0121');
+    gBase.addColorStop(1, '#352353');
+    bgX.fillStyle = gBase;
+    bgX.fillRect(0, 0, W, H);
+    const g1 = bgX.createRadialGradient(W*0.3,H*0.7,0,W*0.3,H*0.7,W*0.9);
+    g1.addColorStop(0,'rgba(55,15,90,0.7)');g1.addColorStop(0.5,'rgba(25,8,55,0.3)');g1.addColorStop(1,'transparent');
+
+    const g2 = bgX.createRadialGradient(W*0.75,H*0.2,0,W*0.75,H*0.2,W*0.8);
+    g2.addColorStop(0,'rgba(30,12,70,0.6)');g2.addColorStop(0.5,'rgba(15,5,45,0.3)');g2.addColorStop(1,'transparent');
+
+    const g3 = bgX.createRadialGradient(W*0.5,H*0.35,0,W*0.5,H*0.35,W*0.5);
+    g3.addColorStop(0,'rgba(80,25,120,0.2)');g3.addColorStop(1,'transparent');
+    const titlePos = getTitleCenter();
+    const moonGlow = bgX.createRadialGradient(titlePos.x, titlePos.y, 0, titlePos.x, titlePos.y, Math.min(W,H)*0.7);
+    moonGlow.addColorStop(0, 'rgba(80,55,130,0.7)');
+    moonGlow.addColorStop(0.2, 'rgba(50,30,90,0.5)');
+    moonGlow.addColorStop(0.4, 'rgba(35,18,70,0.3)');
+    moonGlow.addColorStop(0.7, 'rgba(20,10,50,0.15)');
+    moonGlow.addColorStop(1, 'transparent');
+
+    bgX.fillStyle = g1; bgX.fillRect(0,0,W,H);
+    bgX.fillStyle = g2; bgX.fillRect(0,0,W,H);
+    bgX.fillStyle = g3; bgX.fillRect(0,0,W,H);
+    bgX.fillStyle = moonGlow; bgX.fillRect(0,0,W,H);
+    for(let i=0;i<4;i++){
+      const ng=bgX.createRadialGradient(rand(W*0.2,W*0.8),rand(H*0.2,H*0.8),0,rand(W*0.2,W*0.8),rand(H*0.2,H*0.8),rand(200,500));
+      ng.addColorStop(0,`hsla(${rand(250,310)},60%,25%,0.08)`);ng.addColorStop(1,'transparent');
+      bgX.fillStyle=ng;bgX.fillRect(0,0,W,H);
+    }
+  }
+
+  // ─── Stars ───
+  let stars = [];
+  function initStars() {
+    stars = [];
+    for (let i = 0; i < CFG.STARS; i++) {
+      stars.push({
+        x: rand(0,W), y: rand(0,H),
+        r: rand(0.3,2.2),
+        phase: rand(0,Math.PI*2),
+        speed: rand(0.003,0.018),
+        baseAlpha: rand(0.15,0.85),
+        color: pick(['210,195,255','255,255,255','190,170,240','230,215,255','150,130,210','255,230,255','255,250,230']),
+        depth: rand(0.1,0.5),
+      });
+    }
+  }
+
+  function drawStars(t) {
+    starX.clearRect(0,0,W,H);
+    const px = (mouseX-0.5)*CFG.PARALLAX_STRENGTH;
+    const py = (mouseY-0.5)*CFG.PARALLAX_STRENGTH;
+    for(const s of stars){
+      const a = s.baseAlpha*(0.4+0.6*Math.sin(s.phase+t*s.speed));
+      const sx = s.x+px*s.depth, sy = s.y+py*s.depth;
+      starX.beginPath(); starX.arc(sx,sy,s.r,0,Math.PI*2);
+      starX.fillStyle=`rgba(${s.color},${a})`; starX.fill();
+      if(s.r>1.3){
+        starX.beginPath(); starX.arc(sx,sy,s.r*3.5,0,Math.PI*2);
+        const gg=starX.createRadialGradient(sx,sy,0,sx,sy,s.r*3.5);
+        gg.addColorStop(0,`rgba(${s.color},${a*0.3})`);gg.addColorStop(1,`rgba(${s.color},0)`);
+        starX.fillStyle=gg; starX.fill();
+      }
+    }
+  }
+
+  // ═══════════════════════════════════════
+  //  ★ MOON — Bright white, behind TITLE
+  // ═══════════════════════════════════════
+  function getMoonPos() {
+    const M = CFG.MOON;
+    const moonR = Math.min(W, H) * M.radius;
+    const titlePos = getTitleCenter();
+    const mx = titlePos.x + (mouseX - 0.5) * CFG.PARALLAX_STRENGTH * 0.1;
+    const my = titlePos.y + (mouseY - 0.5) * CFG.PARALLAX_STRENGTH * 0.08;
+    return { x: mx, y: my, r: moonR };
+  }
+
+  function drawMoon(t) {
+    moonX.clearRect(0, 0, W, H);
+    const M = CFG.MOON;
+    const { x: mx, y: my, r: moonR } = getMoonPos();
+    const pulse = 1 + Math.sin(t * 0.0008) * 0.03 + Math.sin(t * 0.0013) * 0.02;
+
+    // ── Outermost atmospheric glow layers ──
+    for (let i = M.glowLayers.length - 1; i >= 0; i--) {
+      const gl = M.glowLayers[i];
+      const gr = moonR * gl.radius * pulse;
+      const pAlpha = gl.alpha * (0.85 + 0.15 * Math.sin(t * 0.0006 + i * 0.7));
+
+      const gradient = moonX.createRadialGradient(mx, my, moonR * 0.2, mx, my, gr);
+      gradient.addColorStop(0, `rgba(${gl.color[0]},${gl.color[1]},${gl.color[2]},${pAlpha})`);
+      gradient.addColorStop(0.4, `rgba(${gl.color[0]},${gl.color[1]},${gl.color[2]},${pAlpha * 0.5})`);
+      gradient.addColorStop(1, `rgba(${gl.color[0]},${gl.color[1]},${gl.color[2]},0)`);
+
+      moonX.fillStyle = gradient;
+      moonX.beginPath();
+      moonX.arc(mx, my, gr, 0, Math.PI * 2);
+      moonX.fill();
+    }
+
+    // ── Moon ring / halo ──
+    const ringR = moonR * 4.0 * pulse;
+    moonX.save();
+    moonX.globalAlpha = 0.06 + Math.sin(t * 0.0004) * 0.02;
+    moonX.beginPath();
+    moonX.arc(mx, my, ringR, 0, Math.PI * 2);
+    moonX.strokeStyle = 'rgba(220,200,255,0.5)';
+    moonX.lineWidth = moonR * 0.15;
+    moonX.stroke();
+    moonX.restore();
+
+    // ── Second subtle ring ──
+    const ringR2 = moonR * 6.5 * pulse;
+    moonX.save();
+    moonX.globalAlpha = 0.025 + Math.sin(t * 0.0005 + 1) * 0.01;
+    moonX.beginPath();
+    moonX.arc(mx, my, ringR2, 0, Math.PI * 2);
+    moonX.strokeStyle = 'rgba(180,160,240,0.3)';
+    moonX.lineWidth = moonR * 0.08;
+    moonX.stroke();
+    moonX.restore();
+
+    // ── Core solid moon ──
+    const coreGrad = moonX.createRadialGradient(
+      mx - moonR * 0.2, my - moonR * 0.25, moonR * 0.1,
+      mx, my, moonR
+    );
+    coreGrad.addColorStop(0, 'rgba(255,255,255,1)');
+    coreGrad.addColorStop(0.3, 'rgba(255,252,245,0.98)');
+    coreGrad.addColorStop(0.7, 'rgba(245,240,235,0.95)');
+    coreGrad.addColorStop(0.85, 'rgba(235,225,240,0.90)');
+    coreGrad.addColorStop(1, 'rgba(210,195,230,0.80)');
+
+    moonX.beginPath();
+    moonX.arc(mx, my, moonR, 0, Math.PI * 2);
+    moonX.fillStyle = coreGrad;
+    moonX.fill();
+
+    // ── Moon surface craters ──
+    drawMoonSurface(mx, my, moonR);
+
+    // ── Bright inner glow ──
+    const innerGlow = moonX.createRadialGradient(mx, my, 0, mx, my, moonR * 1.3);
+    innerGlow.addColorStop(0.5, 'rgba(255,255,255,0.3)');
+    innerGlow.addColorStop(1, 'rgba(255,250,240,0.1)');
+    innerGlow.addColorStop(1, 'rgba(255,245,235,0)');
+    moonX.fillStyle = innerGlow;
+    moonX.beginPath();
+    moonX.arc(mx, my, moonR * 1.3, 0, Math.PI * 2);
+    moonX.fill();
+
+    // ── Lens flare ──
+    drawLensFlare(mx, my, moonR, t);
+  }
+
+  function drawMoonSurface(mx, my, r) {
+    const craters = [
+      { x: -0.25, y: -0.1, r: 0.15, a: 0.06 },
+      { x: 0.2, y: 0.25, r: 0.12, a: 0.05 },
+      { x: -0.1, y: 0.35, r: 0.10, a: 0.04 },
+      { x: 0.35, y: -0.15, r: 0.08, a: 0.05 },
+      { x: -0.35, y: 0.2, r: 0.18, a: 0.04 },
+      { x: 0.05, y: -0.3, r: 0.09, a: 0.03 },
+      { x: 0.15, y: 0.05, r: 0.22, a: 0.03 },
+      { x: -0.4, y: -0.3, r: 0.07, a: 0.04 },
+    ];
+    for (const c of craters) {
+      const cx = mx + c.x * r, cy = my + c.y * r, cr = c.r * r;
+      const g = moonX.createRadialGradient(cx, cy, 0, cx, cy, cr);
+      g.addColorStop(0, `rgba(180,170,195,${c.a})`);
+      g.addColorStop(0.6, `rgba(190,180,200,${c.a * 0.5})`);
+      g.addColorStop(1, 'rgba(200,190,210,0)');
+      moonX.fillStyle = g;
+      moonX.beginPath();
+      moonX.arc(cx, cy, cr, 0, Math.PI * 2);
+      moonX.fill();
+    }
+    moonX.save();
+    moonX.globalCompositeOperation = 'multiply';
+    moonX.globalAlpha = 0.08;
+    const mariaGrad = moonX.createRadialGradient(mx + r*0.1, my + r*0.1, 0, mx, my, r * 0.8);
+    mariaGrad.addColorStop(0, 'rgba(160,150,180,1)');
+    mariaGrad.addColorStop(1, 'rgba(200,195,210,0)');
+    moonX.fillStyle = mariaGrad;
+    moonX.beginPath();
+    moonX.arc(mx, my, r * 0.8, 0, Math.PI * 2);
+    moonX.fill();
+    moonX.restore();
+  }
+
+  function drawLensFlare(mx, my, r, t) {
+    const flarePulse = 0.7 + 0.3 * Math.sin(t * 0.001);
+    const flareLen = r * 6 * flarePulse;
+    const flareW = r * 0.15;
+
+    // Vertical
+    const vGrad = moonX.createLinearGradient(mx, my - flareLen, mx, my + flareLen);
+    vGrad.addColorStop(0, 'rgba(255,250,255,0)');
+    vGrad.addColorStop(0.3, 'rgba(255,250,255,0.03)');
+    vGrad.addColorStop(0.5, 'rgba(255,255,255,0.14)');
+    vGrad.addColorStop(0.7, 'rgba(255,250,255,0.03)');
+    vGrad.addColorStop(1, 'rgba(255,250,255,0)');
+    moonX.fillStyle = vGrad;
+    moonX.fillRect(mx - flareW, my - flareLen, flareW * 2, flareLen * 2);
+
+    // Horizontal
+    const hGrad = moonX.createLinearGradient(mx - flareLen, my, mx + flareLen, my);
+    hGrad.addColorStop(0, 'rgba(255,250,255,0)');
+    hGrad.addColorStop(0.3, 'rgba(255,250,255,0.02)');
+    hGrad.addColorStop(0.5, 'rgba(255,255,255,0.10)');
+    hGrad.addColorStop(0.7, 'rgba(255,250,255,0.02)');
+    hGrad.addColorStop(1, 'rgba(255,250,255,0)');
+    moonX.fillStyle = hGrad;
+    moonX.fillRect(mx - flareLen, my - flareW * 0.7, flareLen * 2, flareW * 1.4);
+
+    // Diagonals
+    moonX.save();
+    moonX.translate(mx, my);
+    for (let angle of [Math.PI/4, -Math.PI/4]) {
+      moonX.save();
+      moonX.rotate(angle);
+      const dLen = flareLen * 0.6;
+      const dGrad = moonX.createLinearGradient(0, -dLen, 0, dLen);
+      dGrad.addColorStop(0, 'rgba(230,220,255,0)');
+      dGrad.addColorStop(0.5, 'rgba(240,235,255,0.05)');
+      dGrad.addColorStop(1, 'rgba(230,220,255,0)');
+      moonX.fillStyle = dGrad;
+      moonX.fillRect(-flareW * 0.5, -dLen, flareW, dLen * 2);
+      moonX.restore();
+    }
+    moonX.restore();
+  }
+
+  // ═══════════════════════════════════════════
+  //  ★ TEMPLE GLOW — Behind torii & title
+  // ═══════════════════════════════════════════
+  function drawTempleGlow(t) {
+    glowX.clearRect(0, 0, W, H);
+    const { x: mx, y: my, r: moonR } = getMoonPos();
+
+    // ── Radiant colored beams from behind title ──
+    const beamCount = 16;
+    for (let i = 0; i < beamCount; i++) {
+      const baseAngle = (i / beamCount) * Math.PI * 2;
+      const wobble = Math.sin(t * 0.0004 + i * 1.2) * 0.06;
+      const angle = baseAngle + wobble;
+
+      const len = Math.max(W, H) * 0.85;
+      const spreadAngle = 0.04 + Math.sin(t * 0.0003 + i * 0.8) * 0.02;
+
+      const hue = (240 + i * 22.5 + t * 0.008) % 360;
+      const sat = 50 + Math.sin(t * 0.0005 + i) * 20;
+      const baseAlpha = 0.02 + Math.sin(t * 0.0006 + i * 1.5) * 0.012;
+
+      const endX1 = mx + Math.cos(angle - spreadAngle) * len;
+      const endY1 = my + Math.sin(angle - spreadAngle) * len;
+      const endX2 = mx + Math.cos(angle + spreadAngle) * len;
+      const endY2 = my + Math.sin(angle + spreadAngle) * len;
+
+      const midX = mx + Math.cos(angle) * len * 0.5;
+      const midY = my + Math.sin(angle) * len * 0.5;
+
+      const g = glowX.createLinearGradient(mx, my, midX, midY);
+      g.addColorStop(0, `hsla(${hue},${sat}%,80%,${baseAlpha * 2})`);
+      g.addColorStop(0.3, `hsla(${hue},${sat}%,70%,${baseAlpha})`);
+      g.addColorStop(0.7, `hsla(${hue},${sat}%,50%,${baseAlpha * 0.3})`);
+      g.addColorStop(1, `hsla(${hue},${sat}%,40%,0)`);
+
+      glowX.fillStyle = g;
+      glowX.beginPath();
+      glowX.moveTo(mx, my);
+      glowX.lineTo(endX1, endY1);
+      glowX.lineTo(endX2, endY2);
+      glowX.closePath();
+      glowX.fill();
+    }
+
+    // ── Pulsating aura ──
+    const auraColors = [
+      { h: 270, s: 70, offset: 0 },
+      { h: 220, s: 60, offset: 2 },
+      { h: 300, s: 55, offset: 4 },
+      { h: 200, s: 65, offset: 6 },
+      { h: 40,  s: 80, offset: 8 },
+    ];
+    for (const ac of auraColors) {
+      const aAlpha = 0.04 + Math.sin(t * 0.0005 + ac.offset) * 0.02;
+      const aR = moonR * (6 + Math.sin(t * 0.0004 + ac.offset * 0.5) * 2);
+      const ag = glowX.createRadialGradient(mx, my, moonR * 0.3, mx, my, aR);
+      ag.addColorStop(0, `hsla(${ac.h},${ac.s}%,70%,${aAlpha})`);
+      ag.addColorStop(0.5, `hsla(${ac.h},${ac.s}%,50%,${aAlpha * 0.4})`);
+      ag.addColorStop(1, `hsla(${ac.h},${ac.s}%,30%,0)`);
+      glowX.fillStyle = ag;
+      glowX.beginPath();
+      glowX.arc(mx, my, aR, 0, Math.PI * 2);
+      glowX.fill();
+    }
+
+    // ── Sparkle particles near moon ──
+    for (let i = 0; i < 25; i++) {
+      const sa = t * 0.001 + i * 1.256;
+      const sr = moonR * (1.5 + Math.sin(sa * 0.7 + i) * 1.5);
+      const sx = mx + Math.cos(sa + i * 0.5) * sr;
+      const sy = my + Math.sin(sa * 0.8 + i * 0.3) * sr * 0.7;
+      const sAlpha = (0.15 + Math.sin(sa * 2 + i) * 0.12) * smoothstep(moonR * 1.2, moonR * 3, sr);
+      const sSize = 1 + Math.sin(sa * 3 + i * 2) * 0.8;
+
+      if (sAlpha > 0.02) {
+        glowX.beginPath();
+        glowX.arc(sx, sy, sSize, 0, Math.PI * 2);
+        glowX.fillStyle = `rgba(255,250,240,${sAlpha})`;
+        glowX.fill();
+
+        const sg = glowX.createRadialGradient(sx, sy, 0, sx, sy, sSize * 4);
+        sg.addColorStop(0, `rgba(220,200,255,${sAlpha * 0.4})`);
+        sg.addColorStop(1, 'rgba(220,200,255,0)');
+        glowX.fillStyle = sg;
+        glowX.beginPath();
+        glowX.arc(sx, sy, sSize * 4, 0, Math.PI * 2);
+        glowX.fill();
+      }
+    }
+  }
+
+  // ─── God Rays ───
+  function drawGodRays(t) {
+    rayX.clearRect(0, 0, W, H);
+    const { x: mx, y: my } = getMoonPos();
+
+    const rayCount = 8;
+    for (let i = 0; i < rayCount; i++) {
+      const baseAngle = (i / rayCount) * Math.PI * 2;
+      const wobble = Math.sin(t * 0.00025 + i * 1.3) * 0.08;
+      const angle = baseAngle + wobble;
+
+      const len = Math.max(W, H) * 1.1;
+      const endX = mx + Math.cos(angle) * len;
+      const endY = my + Math.sin(angle) * len;
+
+      const spread = 30 + Math.sin(t * 0.0004 + i * 1.8) * 18;
+      const rayAlpha = 0.006 + Math.sin(t * 0.0005 + i * 2.1) * 0.004;
+
+      const g = rayX.createLinearGradient(mx, my, endX, endY);
+      g.addColorStop(0, `rgba(220,210,255,${rayAlpha * 2})`);
+      g.addColorStop(0.15, `rgba(180,160,240,${rayAlpha * 1.5})`);
+      g.addColorStop(0.4, `rgba(140,100,220,${rayAlpha})`);
+      g.addColorStop(0.7, `rgba(100,60,180,${rayAlpha * 0.4})`);
+      g.addColorStop(1, 'rgba(80,40,150,0)');
+
+      rayX.fillStyle = g;
+      rayX.beginPath();
+      rayX.moveTo(mx, my);
+      rayX.lineTo(endX - spread, endY - spread * 0.5);
+      rayX.lineTo(endX + spread, endY + spread * 0.5);
+      rayX.closePath();
+      rayX.fill();
+    }
+  }
+
+  // ─── Cloud Texture ───
+  const cloudTextureCache = new Map();
+
+  function generateCloudTexture(seed, size, detail, noiseScale, colorInfo) {
+    const key = `${seed}_${size}_${detail}`;
+    if (cloudTextureCache.has(key)) return cloudTextureCache.get(key);
+    const res = Math.min(size, 256);
+    const off = document.createElement('canvas'); off.width=res; off.height=res;
+    const ctx = off.getContext('2d');
+    const imgData = ctx.createImageData(res, res);
+    const data = imgData.data;
+    const cx=res/2, cy=res/2, maxR=res/2;
+
+    for(let y=0;y<res;y++){for(let x=0;x<res;x++){
+      const dx=(x-cx)/maxR, dy=(y-cy)/maxR;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist>1.1){const idx=(y*res+x)*4;data[idx]=data[idx+1]=data[idx+2]=data[idx+3]=0;continue;}
+      const falloff=smoothstep(1.05,0.2,dist);
+      const nx=x*noiseScale+seed*7.3, ny=y*noiseScale+seed*13.7;
+      let noise=fbm(nx,ny,seed*0.5,detail,2.2,0.5);noise=(noise+1)*0.5;
+      const d2=fbm(nx*2.5,ny*2.5,seed*1.3,3,2.0,0.45);
+      noise=noise*0.7+(d2+1)*0.5*0.3;
+      let density=noise*falloff;density=smoothstep(0.15,0.7,density);
+      const eps=noiseScale*2;
+      const nR=fbm(nx+eps,ny,seed*0.5,Math.min(detail,3),2.2,0.5);
+      const nU=fbm(nx,ny-eps,seed*0.5,Math.min(detail,3),2.2,0.5);
+      const sX=(nR-noise*2+1)*3, sY=(nU-noise*2+1)*3;
+      const nL=Math.sqrt(sX*sX+sY*sY+1);
+      const lD=clamp((sX*CFG.LIGHT_DIR.x+sY*CFG.LIGHT_DIR.y+CFG.LIGHT_DIR.z)/nL,0,1);
+      const rim=smoothstep(0.5,0.85,dist)*smoothstep(0.95,0.75,dist)*1.5;
+      const lI=clamp(lD*0.8+rim*0.4+0.15,0,1);
+      const r=lerp(colorInfo.shadow[0],colorInfo.light[0],lI);
+      const g=lerp(colorInfo.shadow[1],colorInfo.light[1],lI);
+      const b=lerp(colorInfo.shadow[2],colorInfo.light[2],lI);
+      const idx=(y*res+x)*4;
+      data[idx]=clamp(r,0,255);data[idx+1]=clamp(g,0,255);data[idx+2]=clamp(b,0,255);data[idx+3]=clamp(density*255,0,255);
+    }}
+    ctx.putImageData(imgData,0,0);
+    const blurred=document.createElement('canvas');blurred.width=res;blurred.height=res;
+    const bCtx=blurred.getContext('2d');bCtx.filter='blur(2px)';bCtx.drawImage(off,0,0);bCtx.filter='none';
+    if(cloudTextureCache.size>60){cloudTextureCache.delete(cloudTextureCache.keys().next().value);}
+    cloudTextureCache.set(key,blurred);return blurred;
+  }
+
+  // ─── Cloud Class ───
+  class VolumetricCloud {
+    constructor(layer, randomX) { this.layer=layer; this.seed=rand(0,1000); this.reset(randomX); }
+    reset(randomX=false) {
+      const L=this.layer;
+      this.size=rand(L.sizeMin,L.sizeMax);this.speed=L.speed*rand(0.7,1.3);
+      this.y=rand(H*L.yRange[0],H*L.yRange[1]);this.yBase=this.y;
+      this.yPhase=rand(0,Math.PI*2);this.yFreq=rand(0.00015,0.0006);
+      this.yAmp=rand(15,50)*(1-L.z*0.5);this.opacity=L.opacity*rand(0.7,1.2);
+      this.rotation=rand(-0.15,0.15);this.rotSpeed=rand(-0.00003,0.00003);
+      this.scaleY=rand(0.5,0.8);this.seed=rand(0,1000);
+      this.morphPhase=rand(0,100);this.morphSpeed=rand(0.00005,0.0002);
+      const dF=L.z;
+      this.colorInfo={
+        light:[lerp(CFG.LIGHT_COLOR[0],CFG.AMBIENT[0],dF*0.3),lerp(CFG.LIGHT_COLOR[1],CFG.AMBIENT[1],dF*0.3),lerp(CFG.LIGHT_COLOR[2],CFG.AMBIENT[2],dF*0.3)],
+        shadow:[lerp(CFG.SHADOW_COLOR[0],CFG.AMBIENT[0],dF*0.5),lerp(CFG.SHADOW_COLOR[1],CFG.AMBIENT[1],dF*0.5),lerp(CFG.SHADOW_COLOR[2],CFG.AMBIENT[2],dF*0.5)]
+      };
+      this.texture=generateCloudTexture(Math.floor(this.seed),Math.min(this.size,256),L.detail,L.scale,this.colorInfo);
+      if(randomX){this.x=rand(-this.size*0.5,W+this.size*0.5);}
+      else if(L.dir>0){this.x=-this.size*1.2;}else{this.x=W+this.size*1.2;}
+    }
+    update(dt) {
+      const L=this.layer;this.x+=L.dir*this.speed*dt;
+      this.yPhase+=this.yFreq*dt;this.morphPhase+=this.morphSpeed*dt;
+      this.rotation+=this.rotSpeed*dt;
+      this.drawY=this.yBase+Math.sin(this.yPhase)*this.yAmp;
+      if(L.dir>0&&this.x>W+this.size*1.5)this.reset(false);
+      else if(L.dir<0&&this.x<-this.size*1.5)this.reset(false);
+    }
+    getEdgeFade(){
+      const fW=W*0.18,fH=H*0.15;let f=1;
+      if(this.x<fW)f=Math.min(f,clamp((this.x+this.size*0.4)/fW,0,1));
+      if(this.x>W-fW)f=Math.min(f,clamp((W-this.x+this.size*0.4)/fW,0,1));
+      if(this.drawY<fH)f=Math.min(f,clamp((this.drawY+this.size*0.3)/fH,0,1));
+      if(this.drawY>H-fH)f=Math.min(f,clamp((H-this.drawY+this.size*0.3)/fH,0,1));
+      return clamp(f,0,1);
+    }
+    draw(ctx){
+      const fade=this.getEdgeFade();if(fade<0.01)return;
+      const px=(mouseX-0.5)*CFG.PARALLAX_STRENGTH*this.layer.z;
+      const py=(mouseY-0.5)*CFG.PARALLAX_STRENGTH*this.layer.z*0.5;
+      ctx.save();ctx.globalAlpha=this.opacity*fade;
+      ctx.translate(this.x+px,this.drawY+py);ctx.rotate(this.rotation);ctx.scale(1,this.scaleY);
+      ctx.drawImage(this.texture,-this.size,-this.size,this.size*2,this.size*2);
+      ctx.restore();
+    }
+  }
+
+  // ─── Motes ───
+  let motes=[];
+  function initMotes(){
+    motes=[];
+    for(let i=0;i<60;i++){
+      motes.push({
+        x:rand(0,W),y:rand(0,H),vx:rand(-0.2,0.2),vy:rand(-0.15,0.15),
+        size:rand(1,4),alpha:rand(0.02,0.12),phase:rand(0,Math.PI*2),
+        speed:rand(0.001,0.005),depth:rand(0.6,1),
+        color:pick(['190,170,255','210,190,255','170,150,240','240,230,255','255,250,240']),
+      });
+    }
+  }
+  function drawMotes(t){
+    fgX.clearRect(0,0,W,H);
+    const px=(mouseX-0.5)*CFG.PARALLAX_STRENGTH;
+    const py=(mouseY-0.5)*CFG.PARALLAX_STRENGTH;
+    for(const m of motes){
+      m.x+=m.vx;m.y+=m.vy;
+      if(m.x<-10)m.x=W+10;if(m.x>W+10)m.x=-10;
+      if(m.y<-10)m.y=H+10;if(m.y>H+10)m.y=-10;
+      const a=m.alpha*(0.4+0.6*Math.sin(m.phase+t*m.speed));
+      const mx2=m.x+px*m.depth, my2=m.y+py*m.depth;
+      const g=fgX.createRadialGradient(mx2,my2,0,mx2,my2,m.size*3);
+      g.addColorStop(0,`rgba(${m.color},${a})`);g.addColorStop(1,`rgba(${m.color},0)`);
+      fgX.fillStyle=g;fgX.beginPath();fgX.arc(mx2,my2,m.size*3,0,Math.PI*2);fgX.fill();
+    }
+  }
+
+  // ─── Init Clouds ───
+  let allClouds=[];
+  function initClouds(){
+    allClouds=[];
+    for(const layer of CFG.CLOUD_LAYERS)for(let i=0;i<layer.count;i++)allClouds.push(new VolumetricCloud(layer,true));
+    allClouds.sort((a,b)=>a.layer.z-b.layer.z);
+  }
+
+  // ─── Mouse ───
+  document.addEventListener('mousemove',e=>{targetMX=e.clientX/W;targetMY=e.clientY/H;});
+  document.addEventListener('touchmove',e=>{if(e.touches.length>0){targetMX=e.touches[0].clientX/W;targetMY=e.touches[0].clientY/H;}},{passive:true});
+
+  // ─── Main Loop ───
+  let lastTime=0, frameCount=0;
+
+  function animate(timestamp){
+    requestAnimationFrame(animate);
+    const dt=Math.min(timestamp-lastTime,80);lastTime=timestamp;frameCount++;
+    mouseX=lerp(mouseX,targetMX,0.03);mouseY=lerp(mouseY,targetMY,0.03);
+
+    // Clouds
+    cloudX.clearRect(0,0,W,H);
+    for(const c of allClouds){c.update(dt);c.draw(cloudX);}
+
+    // Stars
+    drawStars(timestamp);
+
+    // Moon — every frame for smooth glow
+    drawMoon(timestamp);
+
+    // God rays — every 2nd frame
+    if(frameCount%2===0) drawGodRays(timestamp);
+
+    // Temple glow — every 2nd frame offset
+    if(frameCount%2===1) drawTempleGlow(timestamp);
+
+    // Motes
+    drawMotes(timestamp);
+  }
+
+  // ─── Boot ───
+  function init(){
+    resize();initClouds();initMotes();
+    lastTime=performance.now();requestAnimationFrame(animate);
+  }
+
+  let resizeTimer;
+  window.addEventListener('resize',()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(()=>{resize();cloudTextureCache.clear();initClouds();initMotes();},200);
+  });
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)lastTime=performance.now();});
+  init();
+})();
+</script>
+</body>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

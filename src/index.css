@@ -1,0 +1,325 @@
+@import "tailwindcss";
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+  --color-yellow-100: #fcd34d;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0d1b1ecc, #0e0121, #352353);
+      color: #F8F3E6;
+      font-family: serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      cursor: default;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(
+        circle,
+        rgba(255, 255, 255, 0.03),
+        transparent 70%
+      );
+      pointer-events: none;
+      z-index: 8;
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+    }
+
+    #bg-canvas    { z-index: 0; }
+    #star-canvas  { z-index: 1; }
+    #moon-canvas  { z-index: 2; }
+    #cloud-canvas { z-index: 3; }
+    #ray-canvas   { z-index: 4; mix-blend-mode: screen; }
+    #glow-canvas  { z-index: 5; mix-blend-mode: screen; }
+    #fg-canvas    { z-index: 6; mix-blend-mode: screen; }
+
+    #vignette {
+      position: fixed; inset:0; z-index: 7; pointer-events: none;
+      background: radial-gradient(ellipse 70% 60% at 50% 50%, transparent 20%, rgba(3,1,10,0.75) 100%);
+    }
+
+    /* ─── UI Layer ─── */
+    #root {
+      position: relative;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    #root > * {
+      pointer-events: auto;
+    }
+
+    #ui-overlay {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      pointer-events: none;
+    }
+
+    .title-group {
+      text-align: center;
+      animation: fadeInUp 2.5s ease-out both;
+      pointer-events: auto;
+    }
+
+    .title {
+      margin-top: 2rem;
+      font-weight:bold;
+      color: linear-gradient(135deg, #241439fd, #ffd998);
+      font-size: clamp(3rem, 10vw, 7rem);
+      font-family: serif;
+      font-style: italic;
+      text-shadow: 0 0 15px rgba(38, 24, 45, 0.8),
+                    0 0 30px rgba(44, 41, 45, 0.6),
+                    0 0 50px rgba(250, 204, 21, 0.4);
+      text-align:center;
+      margin-bottom: 2rem ;
+    }
+
+    .title p {
+      text-align: center;
+      letter-spacing: 0.08em;
+    }
+
+    .title-jp {
+      font-size: clamp(1rem,3vw,1.8rem);
+      letter-spacing: 0.6em;
+      color: rgba(200,180,255,0.5);
+      margin-bottom: 0.3em;
+      font-weight: 300;
+      text-shadow: 0 0 15px rgba(200,180,255,0.3);
+    }
+
+    .title-main {
+      font-size: clamp(2.8rem,9vw,7rem);
+      font-weight: 100;
+      letter-spacing: 0.15em;
+      background: linear-gradient(135deg,#e0d0ff 0%,#c8a0ff 25%,#ffffff 50%,#b090e0 75%,#9370db 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 0 80px rgba(200,180,255,0.4));
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      margin-top: 1rem;
+      font-size: clamp(0.7rem,1.5vw,1rem);
+      letter-spacing: 0.4em;
+      color: linear-gradient(135deg, #241439fd, #ffd998);
+      font-weight: 300;
+      text-transform: uppercase;
+    }
+
+    .smalltitle {
+      color: linear-gradient(135deg, #241439fd, #ffd998);
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      font-family: 'serif';
+      text-shadow: 0 0 10px rgba(200, 180, 240, 0.5);
+      text-align: center;
+      margin: 1rem auto;
+      letter-spacing: 0.05em;
+    }
+
+    .describe {
+      margin-top: 1.5rem;
+      color: linear-gradient(135deg, #241439fd, #ffd998);
+    }
+    .chinsetext{
+      font-size: 36px;
+      color: linear-gradient(135deg, #241439fd, #ffd998);
+      font-weight:bold;
+      font-family: serif;
+      font-style: italic;
+      text-shadow: 0 0 15px rgba(252, 211, 77, 0.8),\;
+       0 0 30px rgba(245, 158, 11, 0.6),
+       0 0 50px rgba(250, 204, 21, 0.4);
+      text-align: center;
+    }
+    .question {
+      color: rgba(180, 160, 220, 0.8);
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      font-family: 'serif';
+      text-shadow: 0 0 8px rgba(180, 160, 220, 0.4);
+      text-align: center;
+      margin: 0.8rem auto;
+      max-width: 700px;
+      line-height: 1.6;
+      padding: 0 1rem;
+    }
+
+    .image {
+      display: block;
+      margin: 1rem auto 0;
+      width: 250px;
+      height: auto;
+      filter:
+        drop-shadow(0 0 20px rgba(252, 252, 252, 0.941))
+        drop-shadow(0 0 45px rgba(62, 3, 74, 0.916));
+      border-radius: 70%;
+    }
+
+    .ritual-button {
+      position: fixed;
+      bottom: 100px;
+      left: 44%;
+      font-family: 'serif';
+      transform: translateX(-50%);
+      z-index: 11;
+      margin-top: 40px;
+      background: linear-gradient(135deg, #24054cbd, #54545493,#b18be2fd);
+      color: #ffffff;
+      padding: 14px 30px;
+      border-radius: 30px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow:
+        0 0 10px rgba(255, 215, 120, 0.6),
+        0 0 30px rgba(53, 4, 67, 0.542);
+      transition: all 0.3s ease;
+      pointer-events: auto;
+    }
+
+    .ritual-button:hover {
+      transform: scale(1.05);
+      box-shadow:
+        0 0 20px rgba(255, 215, 120, 0.9),
+        0 0 60px rgba(111, 35, 5, 0.912);
+    }
+
+    .ritual-button:active {
+      transform: scale(1.5);
+      box-shadow: 0 2px 4px rgba(250, 204, 21, 0.4) inset;
+    }
+
+    .audio-alert {
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      background: linear-gradient(135deg, #241439fd, #ffd998);
+      color: #ffffff;
+      padding: 20px 40px;
+      border-radius: 16px;
+      font-family: serif;
+      font-size: 1.1rem;
+      box-shadow: 0 8px 32px rgba(147, 112, 219, 0.7);
+      backdrop-filter: blur(15px);
+      border: 2px solid rgba(200, 160, 255, 0.6);
+      pointer-events: none;
+      text-align: center;
+      max-width: 90%;
+    }
+
+    .audio-alert p {
+      margin: 0;
+      letter-spacing: 0.05em;
+    }
+
+    .ansbutton {
+      display: block;
+      width: 100%;
+      font-family: 'serif';
+      padding: 15px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      background: #0e0121;
+      border-radius: 12px;
+      color: #F8F3E6;
+      font-family: serif;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      pointer-events: auto;
+    }
+
+    .ansbutton:hover {
+      background: linear-gradient(135deg, #fcd34d, #f59e0b);
+      color: #150135;
+    }
+
+    .questionbox {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      font-family: 'serif';
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      pointer-events: auto;
+    }
+
+    .torii {
+      position: fixed; bottom: -5px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 9; pointer-events: none;
+      filter: drop-shadow(0 0 30px rgba(180,140,255,0.3)) drop-shadow(0 0 60px rgba(120,80,200,0.15));
+    }
+
+    @keyframes fadeInUp {
+      from { opacity:0; transform:translateY(40px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    @keyframes breathe {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.7; }
+    }
+
+    .scroll-hint {
+      position: fixed;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      color: rgba(200,180,240,0.3);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      animation: breathe 3s ease-in-out infinite;
+      pointer-events: none;
+    }
