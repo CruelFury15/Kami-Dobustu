@@ -84,7 +84,6 @@ class AudioManager {
 
 const audioManager = new AudioManager();
 
-// Preload audio immediately
 audioManager.init();
 
 export default audioManager;

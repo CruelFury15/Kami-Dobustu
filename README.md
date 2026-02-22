@@ -19,7 +19,14 @@ A beautifully crafted interactive web experience that guides users through a mys
 - **Auto-play with User Consent**: Polite audio alert that auto-dismisses after 5 seconds
 - **Howler.js Integration**: Professional audio management with preloading
 
-### 🎯 Quiz Functionality
+### 🔮 Oracle Backend
+- **Express.js Server**: RESTful API for spirit animal determination
+- **Gemini AI Integration**: AI-powered spirit animal analysis
+- **Imagen 3 Support**: Optional AI-generated mystical animal images
+- **Environment Variables**: Secure API key management
+- **Fallback Logic**: Works offline with local algorithms and SVG art
+- **Mystical Loading**: Beautiful loading screens during API calls
+- **CORS Enabled**: Secure cross-origin requests
 - **7 Random Questions**: Dynamically selected from a pool of 30 ritual questions
 - **Visual Progress Tracker**: Numbered circles showing current question progress
 - **Smooth Question Transitions**: Animated question changes with fade effects
@@ -53,23 +60,47 @@ cd kami-dobutsu
 npm install
 ```
 
-3. Start the development server:
+3. Install server dependencies:
 ```bash
-npm run dev
+npm run server:install
 ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+4. Set up environment variables:
+```bash
+# Copy the example .env file in the server directory
+cp server/.env server/.env.local
+# Edit server/.env.local and add your API keys
+```
+
+5. Start both frontend and backend:
+```bash
+npm run start:full
+```
+
+Or start them separately:
+```bash
+# Terminal 1 - Frontend
+npm run dev
+
+# Terminal 2 - Backend
+npm run server
+```
 
 ## 📁 Project Structure
 
 ```
 kami-dobutsu/
+├── server/              # 🔮 The Hidden Oracle Brain (Backend)
+│   ├── .env            # Secret API Keys (never commit!)
+│   ├── index.js        # The actual API logic
+│   └── package.json    # Server dependencies
 ├── public/
 │   └── assets/          # Public assets
 ├── src/
 │   ├── assets/          # Images and icons
 │   ├── audios/          # Background music and sound effects
 │   ├── components/      # Reusable React components
+│   │   └── OracleLoader.jsx # 🔮 Mystical loading screen
 │   ├── data/            # Question data
 │   ├── pages/           # Page components
 │   │   ├── Home.jsx     # Landing page
@@ -77,7 +108,8 @@ kami-dobutsu/
 │   │   ├── QuizProgress.jsx # Progress indicator
 │   │   └── Results.jsx  # Results page
 │   ├── utils/           # Utility functions
-│   │   └── audioManager.js # Audio management
+│   │   ├── audioManager.js # Audio management
+│   │   └── api.js       # 🌐 Backend API helper
 │   ├── App.jsx          # Main app component
 │   ├── main.jsx         # Entry point
 │   └── index.css        # Global styles
@@ -116,7 +148,9 @@ The design combines traditional Japanese aesthetics with modern cosmic mysticism
 - `npm run dev` - Start development server
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
-- `npm run lint` - Run ESLint
+- `npm run start:full` - Start both frontend and backend
+- `npm run server` - Start backend server only
+- `npm run server:install` - Install server dependencies
 
 ## 🎵 Audio Files
 

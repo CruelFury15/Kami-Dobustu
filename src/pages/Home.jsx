@@ -1,23 +1,20 @@
-/* eslint-disable no-unused-vars */
-import {motion} from "framer-motion";
-/* eslint-enable no-unused-vars */
-import {NavLink} from 'react-router-dom';
+import { motion as Motion } from "framer-motion";
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import audioManager from '../utils/audioManager';
 
 function Home() {
+    const navigate = useNavigate();
     const [showAlert, setShowAlert] = useState(false);
 
     useEffect(() => {
-        // Show alert after 1 second
         const showTimer = setTimeout(() => {
             setShowAlert(true);
         }, 1000);
 
-        // Hide alert after 6 seconds total (1s delay + 5s display)
         const hideTimer = setTimeout(() => {
             setShowAlert(false);
-        }, 6000);
+        }, 4000);
 
         audioManager.playBackgroundMusic();
         const enableAudio = () => {
@@ -40,12 +37,13 @@ function Home() {
 
     const handleButtonClick = () => {
         audioManager.playButtonSound();
+        navigate('/questions');
     };
 
     return (
         <>
             {showAlert && (
-                <motion.div
+                <Motion.div
                     initial={{ opacity: 0, y: -50 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -50 }}
@@ -53,49 +51,48 @@ function Home() {
                     className="audio-alert"
                 >
                     <p>🔊 This page has audio. Click anywhere to enable sound!</p>
-                </motion.div>
+                </Motion.div>
             )}
 
             <div className="relative flex min-h-screen flex-col items-center justify-center px-4">
-            <motion.div className = "chinsetext" initial={{opacity:0, y: 20}}
+            <Motion.div className = "chinsetext" initial={{opacity:0, y: 20}}
                         animate={{opacity:1, y: 0}}
                         transition={{delay:0.5, duration:2}}>
                             神 動 物
-            </motion.div>
+            </Motion.div>
                 <div className="title flex items-center justify-center">
-                    <motion.h1
+                    <Motion.h1
                         initial={{opacity:0, y: 20}}
                         animate={{opacity:1, y: 0}}
                         transition={{delay:0.5, duration:2}}
                     >
                         Kami Dōbutsu
-                    </motion.h1>
+                    </Motion.h1>
                 </div>
 
                 <div className="subtitle-container">
-                    <motion.p 
+                    <Motion.p 
                         className="smalltitle" 
                         initial={{opacity:0}}
                         animate={{opacity:1}}
                         transition={{delay:1, duration:2}}
                     >
                         Discover Your Spirit Animal!
-                    </motion.p>
+                    </Motion.p>
                 </div>
 
                 <div className="description-container">
-                    <motion.p 
+                    <Motion.p 
                         className="question" 
                         initial={{opacity:0}}
                         animate={{opacity:1}}
                         transition={{delay:1.5, duration:2}}
                     >
                         Answer the ancient questions. Let the ritual reveal the creature that walks beside your soul.
-                    </motion.p>
+                    </Motion.p>
                 </div>
 
-                <NavLink to="/questions">
-                    <motion.button
+                <Motion.button
                     onClick={handleButtonClick}
                     initial={{y:0}}
                     animate={{scale: [1, 1.15, 1] }}
@@ -108,9 +105,8 @@ function Home() {
                     whileTap={{ scale: 0.90 }}
                     className="ritual-button"
                   >
-                    Enter The Rite!
-                  </motion.button>
-                </NavLink>
+                    🌟 Enter The Rite 🌟
+                  </Motion.button>
             </div>
         </>
     );

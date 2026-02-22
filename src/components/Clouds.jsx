@@ -7,7 +7,6 @@ function Clouds() {
   useEffect(() => {
     cloudsRef.current.forEach((cloud, index) => {
       if (cloud) {
-        // Fast-moving clouds (indices 0-5)
         if (index < 6) {
           if (index % 2 === 0) {
             gsap.fromTo(cloud, 
@@ -40,7 +39,6 @@ function Clouds() {
             delay: index * 0.3
           });
         } 
-        // Slow-moving clouds (indices 6+)
         else {
           if (index % 2 === 0) {
             gsap.fromTo(cloud, 
@@ -88,8 +86,6 @@ function Clouds() {
       zIndex: 10,
       overflow: 'hidden'
     }}>
-      {/* Fast-moving clouds */}
-      {/* Deep Purple cloud */}
       <div
         ref={el => cloudsRef.current[0] = el}
         style={{
@@ -105,7 +101,6 @@ function Clouds() {
         }}
       />
       
-      {/* Cyan-Blue cloud */}
       <div
         ref={el => cloudsRef.current[1] = el}
         style={{
@@ -121,7 +116,6 @@ function Clouds() {
         }}
       />
       
-      {/* Hot Pink cloud */}
       <div
         ref={el => cloudsRef.current[2] = el}
         style={{
@@ -137,7 +131,6 @@ function Clouds() {
         }}
       />
       
-      {/* Violet cloud */}
       <div
         ref={el => cloudsRef.current[3] = el}
         style={{
@@ -153,7 +146,6 @@ function Clouds() {
         }}
       />
       
-      {/* Teal cloud */}
       <div
         ref={el => cloudsRef.current[4] = el}
         style={{
@@ -169,7 +161,6 @@ function Clouds() {
         }}
       />
       
-      {/* Golden-Orange cloud */}
       <div
         ref={el => cloudsRef.current[5] = el}
         style={{
@@ -185,8 +176,6 @@ function Clouds() {
         }}
       />
 
-      {/* Slow-moving clouds */}
-      {/* Lavender cloud */}
       <div
         ref={el => cloudsRef.current[6] = el}
         style={{
@@ -202,7 +191,6 @@ function Clouds() {
         }}
       />
       
-      {/* Rose-Pink cloud */}
       <div
         ref={el => cloudsRef.current[7] = el}
         style={{
@@ -218,7 +206,6 @@ function Clouds() {
         }}
       />
       
-      {/* Indigo cloud */}
       <div
         ref={el => cloudsRef.current[8] = el}
         style={{
@@ -234,7 +221,6 @@ function Clouds() {
         }}
       />
       
-      {/* Coral cloud */}
       <div
         ref={el => cloudsRef.current[9] = el}
         style={{

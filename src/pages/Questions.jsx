@@ -1,25 +1,21 @@
 import { useState, useEffect } from 'react';
 import { ritualQuestions } from "../data/question";
 import { useNavigate } from 'react-router-dom';
-/* eslint-disable no-unused-vars */
 import {motion} from 'framer-motion';
-/* eslint-enable no-unused-vars */
 import audioManager from '../utils/audioManager';
 
 function Questions() {
   const navigate = useNavigate();
   
   const [shuffledQuestions] = useState(() => {
-    return [...ritualQuestions].sort(() => Math.random() - 0.5).slice(0, 7);
+    return [...ritualQuestions].sort(() => Math.random() - 0.5).slice(0, 8);
   });
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState([]);
 
   useEffect(() => {
-    // Ensure background music continues playing
     audioManager.playBackgroundMusic();
 
-    // Enable audio on any mouse movement, click, or touch if not already enabled
     const enableAudio = () => {
       audioManager.enableAudio();
     };
@@ -55,8 +51,15 @@ function Questions() {
   };
 
   return (
-    <>
-      <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+    <div style={{ 
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '20px 0',
+      width: '100%'
+    }}>
+      <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', width: '100%' }}>
 
       <div style={{ 
         display: 'flex', 
@@ -128,7 +131,7 @@ function Questions() {
         </div>
       </motion.div>
     </div>
-    </>
+    </div>
   );
 }
 
