@@ -1,6 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import pkg from '@google-cloud/vertexai';
-const { VertexAI } = pkg;
+import Bytez from "bytez.js";
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -16,24 +15,11 @@ app.use(express.json());
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-let vertexAI = null;
-let imagenModel = null;
+const BYTEZ_API_KEY = "edc1012a276c956de200d0f78e610bba";
+const bytezSDK = new Bytez(BYTEZ_API_KEY);
+const imagenModel = bytezSDK.model("Qwen/Qwen-Image");
 
-try {
-  if (process.env.GOOGLE_CLOUD_PROJECT && process.env.GOOGLE_CLOUD_LOCATION) {
-    vertexAI = new VertexAI({
-      project: process.env.GOOGLE_CLOUD_PROJECT,
-      location: process.env.GOOGLE_CLOUD_LOCATION
-    });
-    imagenModel = vertexAI.preview.getGenerativeModel({
-      model: 'imagegeneration@006' // Imagen 3
-    });
-    console.log('✅ Imagen 3 initialized successfully');
-  }
-} catch {
-  console.warn('⚠️  Imagen not configured, will use SVG placeholders');
-  console.warn('   To enable Imagen 3, see server/IMAGEN_SETUP.md');
-}
+console.log('✅ Bytez Qwen-Image initialized successfully');
 
 const SYSTEM_INSTRUCTION = `
 You are the 'Kami Oracle,' an ancient deity that sees into the true essence of human souls through their deepest choices.
@@ -102,9 +88,11 @@ app.post('/api/consult-oracle', async (req, res) => {
         Return your response as valid JSON only, no additional text.
       `;
 
+      console.log('🤖 Calling Gemini AI...');
       const result = await model.generateContent(prompt);
       const response = result.response;
       const text = response.text();
+      console.log('✅ Gemini AI response received');
 
       let oracleResult;
       try {
@@ -122,9 +110,16 @@ app.post('/api/consult-oracle', async (req, res) => {
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       let imageUrl = null;
+      let sacredVision = oracleResult.imagePrompt;
+      
       if (oracleResult.imagePrompt) {
         try {
           imageUrl = await generateSacredAnimalImage(oracleResult.imagePrompt, oracleResult.animal);
+          
+          // Generate a beautiful description of the sacred vision based on the animal
+          if (imageUrl) {
+            sacredVision = `A divine cosmic guardian ${oracleResult.animal}, radiating spiritual energy in a celestial realm. Surrounded by sacred geometry and mystical symbols, this ethereal being embodies the essence of ${oracleResult.element} element with glowing cosmic light.`;
+          }
         } catch (imageError) {
           console.error('Image generation failed:', imageError);
         }
@@ -134,7 +129,8 @@ app.post('/api/consult-oracle', async (req, res) => {
         success: true,
         spiritAnimal: {
           ...oracleResult,
-          imageUrl: imageUrl
+          imageUrl: imageUrl,
+          imagePrompt: sacredVision
         },
         message: "The Oracle has gazed into your soul and spoken.",
         timestamp: new Date().toISOString(),
@@ -142,7 +138,9 @@ app.post('/api/consult-oracle', async (req, res) => {
       });
 
     } catch (aiError) {
-      console.error('Gemini AI Error:', aiError);
+      console.error('❌ Gemini AI Error:', aiError);
+      console.error('Error details:', aiError.message);
+      console.error('Error stack:', aiError.stack);
       return res.json(await getFallbackResult(answers));
     }
 
@@ -157,48 +155,82 @@ app.post('/api/consult-oracle', async (req, res) => {
 
 async function generateSacredAnimalImage(imagePrompt, animalName) {
   try {
-    if (imagenModel) {
-      console.log(`Generating image with Imagen 3 for ${animalName}...`);
+    console.log(`🎨 Generating image with Bytez Qwen-Image for ${animalName}...`);
 
-      const enhancedPrompt = `
-A divine cosmic guardian ${imagePrompt}, centered composition, depicted as a powerful ethereal entity with ultra-detailed anatomy, glowing eyes radiating spiritual energy, and a majestic, god-like presence.
+    const enhancedPrompt = `A divine cosmic guardian ${animalName}, centered composition, facing forward in a powerful and majestic pose, surrounded by glowing sacred geometry symbols and mystical sigils, floating in a cosmic celestial environment. The ${animalName} has ultra-detailed anatomy, highly detailed fur/feathers/scales, glowing eyes radiating spiritual energy, subtle energy particles flowing from its body, appearing ethereal and god-like. Behind the ${animalName} is a large radiant sacred geometric mandala composed of interlocking triangles, circles, arcane runes, and alchemical symbols, emitting golden and cyan light. Background filled with deep space, nebula clouds, stars, cosmic dust, and volumetric fog, creating a divine and mystical atmosphere. Lighting is cinematic and dramatic, strong rim lighting, god rays, volumetric lighting, soft bloom, high dynamic range, bioluminescent glow. Color palette includes gold, blue, cyan, and soft orange energy tones, high contrast, mystical illumination. Style: ultra detailed fantasy art, epic, cinematic, unreal engine 5 render, octane render, ray tracing, volumetric lighting, hyper realistic, artstation quality, 2k resolution, sharp focus, depth of field, digital masterpiece, centered symmetry, highly detailed textures.`;
 
-Behind the ${imagePrompt} is a large radiant sacred geometry mandala composed of interlocking triangles, circles, arcane runes, and alchemical symbols, emitting golden and cyan energy light.
+    const { error, output } = await imagenModel.run(enhancedPrompt);
 
-Environment set in a celestial cosmic background filled with nebula clouds, deep space, stars, cosmic dust, and volumetric fog. Mystical energy particles, glowing embers, and stardust flowing around the subject.
+    console.log('📦 Bytez API Response:', { 
+      hasError: !!error, 
+      hasOutput: !!output,
+      outputType: typeof output,
+      outputValue: output
+    });
 
-Lighting is cinematic and dramatic, strong rim lighting, volumetric god rays, soft bloom, subsurface scattering, high dynamic range illumination, and bioluminescent glow.
+    if (error) {
+      console.error('❌ Bytez API error:', error);
+      return null;
+    }
 
-Style: hyper-realistic, ultra-detailed fantasy art, divine, mythical, sacred, cinematic composition, unreal engine 5 render, octane render, ray tracing, volumetric lighting, global illumination, artstation quality, sharp focus, depth of field, 8k resolution, digital masterpiece.
+    if (output) {
+      let imageUrl;
+      
+      // Handle different possible response formats
+      if (typeof output === 'string') {
+        // Check if it's a URL or base64
+        if (output.startsWith('http://') || output.startsWith('https://')) {
+          // It's a URL - use directly
+          imageUrl = output;
+        } else if (output.startsWith('data:image')) {
+          // Already a data URI
+          imageUrl = output;
+        } else {
+          // Assume it's base64
+          imageUrl = `data:image/png;base64,${output}`;
+        }
+      } else if (Array.isArray(output) && output.length > 0) {
+        // Array - check first element
+        const firstItem = output[0];
+        if (typeof firstItem === 'string') {
+          if (firstItem.startsWith('http://') || firstItem.startsWith('https://')) {
+            imageUrl = firstItem;
+          } else if (firstItem.startsWith('data:image')) {
+            imageUrl = firstItem;
+          } else {
+            imageUrl = `data:image/png;base64,${firstItem}`;
+          }
+        }
+      } else if (output.image) {
+        // Object with image property
+        imageUrl = output.image;
+      } else if (output.url) {
+        // Object with url property
+        imageUrl = output.url;
+      } else if (output.data) {
+        // Object with data property
+        const data = Array.isArray(output.data) ? output.data[0] : output.data;
+        if (typeof data === 'string') {
+          if (data.startsWith('http://') || data.startsWith('https://')) {
+            imageUrl = data;
+          } else {
+            imageUrl = `data:image/png;base64,${data}`;
+          }
+        }
+      }
 
-Color palette: vibrant gold, electric cyan, deep violet, celestial blue, and radiant amber energy tones.
-
-Atmosphere: mystical, divine, powerful, sacred, ethereal, majestic, cosmic fantasy.
-`;
-      const request = {
-        prompt: enhancedPrompt,
-        number_of_images: 1,
-        aspect_ratio: '1:1',
-        safety_filter_level: 'block_some',
-        person_generation: 'allow_adult'
-      };
-
-      const response = await imagenModel.generateImages(request);
-
-      if (response && response.predictions && response.predictions.length > 0) {
-        const imageData = response.predictions[0].bytesBase64Encoded;
-        const imageUrl = `data:image/png;base64,${imageData}`;
-
-        console.log(`Image generated successfully for ${animalName}`);
+      if (imageUrl) {
+        console.log(`✅ Image generated successfully for ${animalName}: ${imageUrl.substring(0, 100)}...`);
         return imageUrl;
       }
     }
 
-    console.log(`No image URL - frontend will use mystical placeholder for ${animalName}`);
+    console.log(`⚠️ No image generated - frontend will use mystical placeholder for ${animalName}`);
     return null;
 
   } catch (error) {
-    console.error('Image generation error:', error.message);
+    console.error('❌ Image generation error:', error.message);
+    console.error('Full error:', error);
     return null;
   }
 }
@@ -346,11 +378,19 @@ async function getFallbackResult(answers) {
     selectedAnimal = spiritAnimals[Math.floor(Math.random() * spiritAnimals.length)];
   }
 
+  const imageUrl = await generateSacredAnimalImage(selectedAnimal.imagePrompt, selectedAnimal.animal);
+  
+  // Generate a beautiful sacred vision description
+  const sacredVision = imageUrl 
+    ? `A divine cosmic guardian ${selectedAnimal.animal}, radiating spiritual energy in a celestial realm. Surrounded by sacred geometry and mystical symbols, this ethereal being embodies the essence of ${selectedAnimal.element} element with glowing cosmic light.`
+    : selectedAnimal.imagePrompt;
+
   return {
     success: true,
     spiritAnimal: {
       ...selectedAnimal,
-      imageUrl: await generateSacredAnimalImage(selectedAnimal.imagePrompt, selectedAnimal.animal)
+      imageUrl: imageUrl,
+      imagePrompt: sacredVision
     },
     message: "The Oracle has consulted the ancient spirits (offline wisdom).",
     timestamp: new Date().toISOString(),
