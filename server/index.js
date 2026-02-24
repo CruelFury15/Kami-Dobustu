@@ -1,5 +1,4 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import Bytez from "bytez.js";
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -13,13 +12,9 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "AIzaSyDzni79CU-HABZt8mPKV3Fdnim__lGDiOA");
 
-const BYTEZ_API_KEY = "edc1012a276c956de200d0f78e610bba";
-const bytezSDK = new Bytez(BYTEZ_API_KEY);
-const imagenModel = bytezSDK.model("Qwen/Qwen-Image");
-
-console.log('✅ Bytez Qwen-Image initialized successfully');
+console.log('✅ Gemini API initialized for text generation');
 
 const SYSTEM_INSTRUCTION = `
 You are the 'Kami Oracle,' an ancient deity that sees into the true essence of human souls through their deepest choices.
@@ -69,79 +64,16 @@ app.post('/api/consult-oracle', async (req, res) => {
       });
     }
 
-    if (!process.env.GEMINI_API_KEY) {
-      console.warn('Gemini API key not found, using fallback logic');
-      return res.json(await getFallbackResult(answers));
-    }
-
+    console.log('🔮 Consulting Gemini Oracle for spirit animal...');
+    
+    // Try Gemini API first for text generation
     try {
-      const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-flash",
-        systemInstruction: SYSTEM_INSTRUCTION
-      });
-
-      const prompt = `
-        Analyze these soul-choices from the mystical quiz: ${JSON.stringify(answers, null, 2)}
-        
-        Each answer represents a deep spiritual choice. Divine their true Kami Dobustu (Divine Animal Spirit).
-        
-        Return your response as valid JSON only, no additional text.
-      `;
-
-      console.log('🤖 Calling Gemini AI...');
-      const result = await model.generateContent(prompt);
-      const response = result.response;
-      const text = response.text();
-      console.log('✅ Gemini AI response received');
-
-      let oracleResult;
-      try {
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          oracleResult = JSON.parse(jsonMatch[0]);
-        } else {
-          throw new Error('No JSON found in response');
-        }
-      } catch (parseError) {
-        console.error('Failed to parse AI response:', parseError);
-        return res.json(await getFallbackResult(answers));
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      let imageUrl = null;
-      let sacredVision = oracleResult.imagePrompt;
-      
-      if (oracleResult.imagePrompt) {
-        try {
-          imageUrl = await generateSacredAnimalImage(oracleResult.imagePrompt, oracleResult.animal);
-          
-          // Generate a beautiful description of the sacred vision based on the animal
-          if (imageUrl) {
-            sacredVision = `A divine cosmic guardian ${oracleResult.animal}, radiating spiritual energy in a celestial realm. Surrounded by sacred geometry and mystical symbols, this ethereal being embodies the essence of ${oracleResult.element} element with glowing cosmic light.`;
-          }
-        } catch (imageError) {
-          console.error('Image generation failed:', imageError);
-        }
-      }
-
-      res.json({
-        success: true,
-        spiritAnimal: {
-          ...oracleResult,
-          imageUrl: imageUrl,
-          imagePrompt: sacredVision
-        },
-        message: "The Oracle has gazed into your soul and spoken.",
-        timestamp: new Date().toISOString(),
-        source: "gemini-ai"
-      });
-
-    } catch (aiError) {
-      console.error('❌ Gemini AI Error:', aiError);
-      console.error('Error details:', aiError.message);
-      console.error('Error stack:', aiError.stack);
-      return res.json(await getFallbackResult(answers));
+      const result = await getGeminiResult(answers);
+      res.json(result);
+    } catch (geminiError) {
+      console.error('❌ Gemini failed, using fallback:', geminiError.message);
+      const result = await getFallbackResult(answers);
+      res.json(result);
     }
 
   } catch (error) {
@@ -153,88 +85,81 @@ app.post('/api/consult-oracle', async (req, res) => {
   }
 });
 
-async function generateSacredAnimalImage(imagePrompt, animalName) {
+async function getGeminiResult(answers) {
   try {
-    console.log(`🎨 Generating image with Bytez Qwen-Image for ${animalName}...`);
-
-    const enhancedPrompt = `A divine cosmic guardian ${animalName}, centered composition, facing forward in a powerful and majestic pose, surrounded by glowing sacred geometry symbols and mystical sigils, floating in a cosmic celestial environment. The ${animalName} has ultra-detailed anatomy, highly detailed fur/feathers/scales, glowing eyes radiating spiritual energy, subtle energy particles flowing from its body, appearing ethereal and god-like. Behind the ${animalName} is a large radiant sacred geometric mandala composed of interlocking triangles, circles, arcane runes, and alchemical symbols, emitting golden and cyan light. Background filled with deep space, nebula clouds, stars, cosmic dust, and volumetric fog, creating a divine and mystical atmosphere. Lighting is cinematic and dramatic, strong rim lighting, god rays, volumetric lighting, soft bloom, high dynamic range, bioluminescent glow. Color palette includes gold, blue, cyan, and soft orange energy tones, high contrast, mystical illumination. Style: ultra detailed fantasy art, epic, cinematic, unreal engine 5 render, octane render, ray tracing, volumetric lighting, hyper realistic, artstation quality, 2k resolution, sharp focus, depth of field, digital masterpiece, centered symmetry, highly detailed textures.`;
-
-    const { error, output } = await imagenModel.run(enhancedPrompt);
-
-    console.log('📦 Bytez API Response:', { 
-      hasError: !!error, 
-      hasOutput: !!output,
-      outputType: typeof output,
-      outputValue: output
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-1.5-flash",
+      systemInstruction: SYSTEM_INSTRUCTION
     });
 
-    if (error) {
-      console.error('❌ Bytez API error:', error);
-      return null;
+    const answerSummary = answers.map((a, i) => 
+      `Question ${i + 1}: ${a.choice}`
+    ).join('\n');
+
+    // List of available animals with images
+    const availableAnimals = [
+      "Wolf", "Eagle", "Bear", "Fox", "Owl", "Dolphin", "Tiger", 
+      "Butterfly", "Lion", "Raven", "Deer", "Snake", "Hawk", 
+      "Turtle", "Hummingbird", "Bat", "Leopard", "Penguin"
+    ];
+
+    const prompt = `
+Analyze these quiz answers and divine the user's true spirit animal:
+
+${answerSummary}
+
+Look deeply into their choices. What patterns emerge? What values drive them? How do they face challenges?
+
+IMPORTANT: You MUST choose ONLY from these available animals:
+${availableAnimals.join(", ")}
+
+Respond ONLY with valid JSON in this exact format:
+{
+  "animal": "Animal name (MUST be from the list above)",
+  "title": "Poetic title",
+  "description": "Two deeply personal sentences that reference their actual choices",
+  "traits": ["trait1", "trait2", "trait3", "trait4", "trait5", "trait6", "trait7", "trait8"],
+  "element": "Fire, Water, Earth, Air, or Spirit"
+}
+`;
+
+    const result = await model.generateContent(prompt);
+    const responseText = result.response.text();
+    
+    console.log('🤖 Gemini raw response:', responseText);
+    
+    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('No JSON found in Gemini response');
     }
-
-    if (output) {
-      let imageUrl;
-      
-      // Handle different possible response formats
-      if (typeof output === 'string') {
-        // Check if it's a URL or base64
-        if (output.startsWith('http://') || output.startsWith('https://')) {
-          // It's a URL - use directly
-          imageUrl = output;
-        } else if (output.startsWith('data:image')) {
-          // Already a data URI
-          imageUrl = output;
-        } else {
-          // Assume it's base64
-          imageUrl = `data:image/png;base64,${output}`;
-        }
-      } else if (Array.isArray(output) && output.length > 0) {
-        // Array - check first element
-        const firstItem = output[0];
-        if (typeof firstItem === 'string') {
-          if (firstItem.startsWith('http://') || firstItem.startsWith('https://')) {
-            imageUrl = firstItem;
-          } else if (firstItem.startsWith('data:image')) {
-            imageUrl = firstItem;
-          } else {
-            imageUrl = `data:image/png;base64,${firstItem}`;
-          }
-        }
-      } else if (output.image) {
-        // Object with image property
-        imageUrl = output.image;
-      } else if (output.url) {
-        // Object with url property
-        imageUrl = output.url;
-      } else if (output.data) {
-        // Object with data property
-        const data = Array.isArray(output.data) ? output.data[0] : output.data;
-        if (typeof data === 'string') {
-          if (data.startsWith('http://') || data.startsWith('https://')) {
-            imageUrl = data;
-          } else {
-            imageUrl = `data:image/png;base64,${data}`;
-          }
-        }
-      }
-
-      if (imageUrl) {
-        console.log(`✅ Image generated successfully for ${animalName}: ${imageUrl.substring(0, 100)}...`);
-        return imageUrl;
-      }
+    
+    const spiritData = JSON.parse(jsonMatch[0]);
+    
+    // Validate that the animal is in our available list
+    if (!availableAnimals.includes(spiritData.animal)) {
+      console.warn(`⚠️ Gemini suggested unavailable animal: ${spiritData.animal}, falling back to trait matching`);
+      throw new Error(`Animal ${spiritData.animal} not available`);
     }
+    
+    console.log('✅ Gemini successfully generated spirit animal:', spiritData.animal);
 
-    console.log(`⚠️ No image generated - frontend will use mystical placeholder for ${animalName}`);
-    return null;
+    return {
+      success: true,
+      spiritAnimal: {
+        ...spiritData,
+        imageUrl: null, // Use local images only
+        imagePrompt: `A divine cosmic guardian ${spiritData.animal}, radiating spiritual energy in a celestial realm. Surrounded by sacred geometry and mystical symbols, this ethereal being embodies the essence of ${spiritData.element} element with glowing cosmic light.`
+      },
+      message: "The Oracle has gazed into your soul through Gemini AI.",
+      timestamp: new Date().toISOString(),
+      source: "gemini-ai"
+    };
 
   } catch (error) {
-    console.error('❌ Image generation error:', error.message);
-    console.error('Full error:', error);
-    return null;
+    console.error('❌ Gemini API error:', error.message);
+    throw error;
   }
 }
-
 
 async function getFallbackResult(answers) {
   const spiritAnimals = [
@@ -357,40 +282,70 @@ async function getFallbackResult(answers) {
       traits: ["joy", "lightness", "agility", "present moment", "sweetness", "energy", "resilience", "beauty"],
       element: "Air",
       imagePrompt: "tiny hummingbird with wings that create rainbow trails, hovering near a magical flower that glows with nectar made of liquid starlight"
+    },
+    {
+      animal: "Bat",
+      title: "The Night Navigator",
+      description: "You thrive in the darkness and see what others cannot. Your intuition and ability to navigate the unknown make you a guide through life's mysteries.",
+      traits: ["intuition", "navigation", "mystery", "rebirth", "perception", "adaptability", "night vision", "transformation"],
+      element: "Spirit",
+      imagePrompt: "mystical bat with wings spread wide against a full moon, surrounded by swirling shadows and ethereal energy, glowing eyes piercing the darkness"
+    },
+    {
+      animal: "Leopard",
+      title: "The Silent Hunter",
+      description: "You move with grace and precision, striking when the moment is right. Your patience and stealth make you a master of timing and strategy.",
+      traits: ["stealth", "patience", "precision", "grace", "independence", "strategy", "power", "elegance"],
+      element: "Earth",
+      imagePrompt: "elegant leopard with spotted coat shimmering in moonlight, crouched on a tree branch with intense focused eyes, surrounded by jungle mist"
+    },
+    {
+      animal: "Penguin",
+      title: "The Devoted Community Builder",
+      description: "You understand the power of togetherness and loyalty. Your dedication to your community and ability to thrive in harsh conditions inspire resilience.",
+      traits: ["loyalty", "community", "resilience", "dedication", "adaptability", "family bonds", "perseverance", "cooperation"],
+      element: "Water",
+      imagePrompt: "regal penguin standing on an ice formation with aurora borealis dancing in the sky, surrounded by crystalline ice and glowing water reflections"
     }
   ];
 
   const answerTexts = answers.map(a => a.choice.toLowerCase()).join(' ');
-  let selectedAnimal;
   
-  for (const animal of spiritAnimals) {
+  // Score all animals based on trait matches
+  const animalScores = spiritAnimals.map(animal => {
     const matchCount = animal.traits.filter(trait => 
-      answerTexts.includes(trait) || answerTexts.includes(trait.substring(0, 4))
+      answerTexts.includes(trait.toLowerCase()) || 
+      answerTexts.includes(trait.toLowerCase().substring(0, 4))
     ).length;
     
-    if (matchCount > 0) {
-      selectedAnimal = animal;
-      break;
-    }
-  }
+    return {
+      animal,
+      score: matchCount
+    };
+  });
   
-  if (!selectedAnimal) {
-    selectedAnimal = spiritAnimals[Math.floor(Math.random() * spiritAnimals.length)];
-  }
-
-  const imageUrl = await generateSacredAnimalImage(selectedAnimal.imagePrompt, selectedAnimal.animal);
+  // Sort by score (highest first)
+  animalScores.sort((a, b) => b.score - a.score);
   
-  // Generate a beautiful sacred vision description
-  const sacredVision = imageUrl 
-    ? `A divine cosmic guardian ${selectedAnimal.animal}, radiating spiritual energy in a celestial realm. Surrounded by sacred geometry and mystical symbols, this ethereal being embodies the essence of ${selectedAnimal.element} element with glowing cosmic light.`
-    : selectedAnimal.imagePrompt;
+  // Get the highest score
+  const highestScore = animalScores[0].score;
+  
+  // Get all animals with the highest score (in case of ties)
+  const topAnimals = animalScores.filter(a => a.score === highestScore);
+  
+  // Randomly select from top scoring animals
+  const selectedAnimal = topAnimals[Math.floor(Math.random() * topAnimals.length)].animal;
 
+  console.log(`🎯 Selected ${selectedAnimal.animal} with score ${highestScore} from ${topAnimals.length} top candidates`);
+
+  // No image generation - use local images only
+  const imageUrl = null;
+  
   return {
     success: true,
     spiritAnimal: {
       ...selectedAnimal,
-      imageUrl: imageUrl,
-      imagePrompt: sacredVision
+      imageUrl: imageUrl
     },
     message: "The Oracle has consulted the ancient spirits (offline wisdom).",
     timestamp: new Date().toISOString(),
@@ -417,10 +372,24 @@ app.get('/api/test-oracle', async (_req, res) => {
   res.json(result);
 });
 
+app.get('/api/test-gemini', async (_req, res) => {
+  try {
+    console.log('🧪 Testing Gemini API...');
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const result = await model.generateContent("Say 'Hello, Oracle is working!' in JSON format: {message: '...'}");
+    const text = result.response.text();
+    console.log('✅ Gemini test successful:', text);
+    res.json({ success: true, response: text, message: 'Gemini API is working!' });
+  } catch (error) {
+    console.error('❌ Gemini test failed:', error.message);
+    res.json({ success: false, error: error.message, message: 'Gemini API failed!' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`🌙 Kami Dōbutsu Oracle Brain awakens on port ${PORT}`);
   console.log(`🔮 The mystical backend is ready to divine spirit animals...`);
-  console.log(`🤖 Gemini AI: ${process.env.GEMINI_API_KEY ? 'Connected' : 'Not configured (using fallback)'}`);
+  console.log(`🤖 Gemini API Key: ${process.env.GEMINI_API_KEY ? 'Set (length: ' + (process.env.GEMINI_API_KEY || 'AIzaSyDzni79CU-HABZt8mPKV3Fdnim__lGDiOA').length + ')' : 'Not set - using hardcoded'}`);
 });
 
 export default app;

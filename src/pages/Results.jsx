@@ -4,6 +4,25 @@ import { motion as Motion } from 'framer-motion';
 import { fetchOracleResult } from '../utils/api';
 import OracleLoader from '../components/OracleLoader';
 
+// Import all animal images
+import BatImg from '../assets/Bat.jpg';
+import BearImg from '../assets/Bear.jpg';
+import ButterflyImg from '../assets/Butterfly.jpg';
+import DeerImg from '../assets/Deer.jpg';
+import DolphinImg from '../assets/Dolphin.jpg';
+import FoxImg from '../assets/Fox.jpg';
+import HawkImg from '../assets/Hawk.jpg';
+import HummingBirdImg from '../assets/HummingBird.jpg';
+import LeopardImg from '../assets/Leopard.jpg';
+import LionImg from '../assets/Lion.jpg';
+import OwlImg from '../assets/Owl.jpg';
+import PenguinImg from '../assets/Penguin.jpg';
+import RavenImg from '../assets/Raven.jpg';
+import SnakeImg from '../assets/Snake.jpg';
+import TigerImg from '../assets/Tiger.jpg';
+import TurtleImg from '../assets/Turtle.jpg';
+import WolfImg from '../assets/Wolf.jpg';
+
 const createMysticalPlaceholder = (animal, element) => {
   const elementColors = {
     'Fire': { primary: '#ff6b35', secondary: '#f7931e', tertiary: '#ffcc02', glow: 'rgba(255, 107, 53, 0.6)' },
@@ -15,91 +34,87 @@ const createMysticalPlaceholder = (animal, element) => {
 
   const colors = elementColors[element] || elementColors['Spirit'];
   
-  const animalEmojis = {
-    'Wolf': '🐺',
-    'Eagle': '🦅',
-    'Bear': '🐻',
-    'Fox': '🦊',
-    'Owl': '🦉',
-    'Dolphin': '🐬',
-    'Tiger': '🐯',
-    'Butterfly': '🦋',
-    'Lion': '🦁',
-    'Raven': '🐦‍⬛',
-    'Deer': '🦌',
-    'Snake': '🐍',
-    'Hawk': '🦅',
-    'Turtle': '🐢',
-    'Hummingbird': '🐦'
+  // Map animal names to imported images
+  const animalImages = {
+    'Bat': BatImg,
+    'Bear': BearImg,
+    'Butterfly': ButterflyImg,
+    'Deer': DeerImg,
+    'Dolphin': DolphinImg,
+    'Eagle': HawkImg, // Using Hawk image for Eagle
+    'Fox': FoxImg,
+    'Hawk': HawkImg,
+    'Hummingbird': HummingBirdImg,
+    'Leopard': LeopardImg,
+    'Lion': LionImg,
+    'Owl': OwlImg,
+    'Penguin': PenguinImg,
+    'Raven': RavenImg,
+    'Snake': SnakeImg,
+    'Tiger': TigerImg,
+    'Turtle': TurtleImg,
+    'Wolf': WolfImg
   };
 
-  const emoji = animalEmojis[animal] || '✨';
+  const imageUrl = animalImages[animal] || WolfImg;
 
   return (
     <div style={{
       width: '100%',
       height: '100%',
       borderRadius: '20px',
-      background: `linear-gradient(135deg, ${colors.primary}, ${colors.secondary}, ${colors.tertiary})`,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
       boxShadow: `0 20px 40px rgba(0,0,0,0.3), 0 0 40px ${colors.glow}`,
       border: '3px solid rgba(252, 211, 77, 0.6)',
       position: 'relative',
       overflow: 'hidden'
     }}>
+      <img 
+        src={imageUrl} 
+        alt={animal}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          display: 'block',
+          animation: 'slowMotion 20s ease-in-out infinite'
+        }}
+      />
+      
       <div style={{
         position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: `radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent 50%), 
-                     radial-gradient(circle at 70% 70%, rgba(252, 211, 77, 0.2), transparent 50%)`,
-        pointerEvents: 'none',
-        animation: 'pulse 3s ease-in-out infinite'
-      }} />
-      
-      <div style={{
-        fontSize: '6rem',
-        marginBottom: '15px',
-        textAlign: 'center',
-        zIndex: 1,
-        filter: 'drop-shadow(0 0 10px rgba(0,0,0,0.5))',
-        animation: 'float 3s ease-in-out infinite'
-      }}>
-        {emoji}
-      </div>
-      
-      <div style={{
-        fontSize: '1.8rem',
-        fontWeight: 'bold',
-        color: 'rgba(255,255,255,0.95)',
-        textShadow: '0 0 20px rgba(0,0,0,0.8), 0 2px 4px rgba(0,0,0,0.5)',
-        marginBottom: '8px',
-        textAlign: 'center',
-        fontFamily: 'serif',
-        zIndex: 1,
-        letterSpacing: '2px'
-      }}>
-        {animal}
-      </div>
-      
-      <div style={{
-        padding: '6px 14px',
-        background: 'rgba(0,0,0,0.5)',
-        borderRadius: '16px',
+        bottom: '15px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        padding: '8px 16px',
+        background: 'rgba(0,0,0,0.7)',
+        borderRadius: '20px',
         color: 'white',
-        fontSize: '0.85rem',
+        fontSize: '0.9rem',
         fontWeight: '600',
-        zIndex: 1,
-        border: '1px solid rgba(255,255,255,0.3)',
-        backdropFilter: 'blur(10px)'
+        zIndex: 2,
+        border: '2px solid rgba(252, 211, 77, 0.8)',
+        backdropFilter: 'blur(10px)',
+        boxShadow: '0 4px 15px rgba(0,0,0,0.5)'
       }}>
         ✨ {element} ✨
       </div>
+      
+      <style>{`
+        @keyframes slowMotion {
+          0%, 100% { 
+            transform: scale(1) translate(0, 0);
+          }
+          25% { 
+            transform: scale(1.05) translate(-2%, -2%);
+          }
+          50% { 
+            transform: scale(1.08) translate(2%, 1%);
+          }
+          75% { 
+            transform: scale(1.05) translate(-1%, 2%);
+          }
+        }
+      `}</style>
       
       {[...Array(8)].map((_, i) => (
         <div
@@ -177,7 +192,7 @@ const Results = () => {
 
     const timer = setTimeout(() => {
       setIsRitualComplete(true);
-    }, 5000); 
+    }, 5000); // Reduced to 5 seconds - no image generation needed
 
     getResult();
     return () => clearTimeout(timer);
