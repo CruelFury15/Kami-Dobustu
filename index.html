@@ -121,8 +121,9 @@
   function fbm(x,y,z,octaves,lac,gain){let v=0,a=0.5,f=1;for(let i=0;i<octaves;i++){v+=a*SimplexNoise.noise3D(x*f,y*f,z*f);a*=gain;f*=lac;}return v;}
   const CFG = {
     CLOUD_LAYERS: window.matchMedia('(max-width: 768px)').matches ? [
-      { z:0.30, count: 3, sizeMin: 450, sizeMax: 850, speed: 0.14, dir: -1, opacity: 0.35, detail: 4, scale: 0.003, yRange: [0.10, 0.70] },
-      { z:0.70, count: 3, sizeMin: 200, sizeMax: 450, speed: 0.35, dir: -1, opacity: 0.25, detail: 3, scale: 0.003, yRange: [0.10, 0.70] },
+      { z:0.30, count: 2, sizeMin: 450, sizeMax: 850, speed: 0.14, dir: -1, opacity: 0.35, detail: 4, scale: 0.003, yRange: [0.10, 0.70] },
+      { z:0.70, count: 2, sizeMin: 200, sizeMax: 450, speed: 0.35, dir: -1, opacity: 0.25, detail: 3, scale: 0.003, yRange: [0.10, 0.70] },
+      { z:0.90, count: 2, sizeMin: 120, sizeMax: 300, speed: 0.50, dir: 1, opacity: 0.15, detail: 4, scale: 0.004, yRange: [0.15, 0.65] }
     ] : [
       { z:0.15, count:4, sizeMin:600, sizeMax:1100, speed:0.08, dir:1, opacity:0.40, detail:6, scale:0.0012, yRange:[0.10,0.55] },
       { z:0.30, count:5, sizeMin:450, sizeMax:850, speed:0.14, dir:-1, opacity:0.35, detail:5, scale:0.0016, yRange:[0.08,0.60] },
@@ -134,7 +135,7 @@
     LIGHT_COLOR: [220,200,255],
     SHADOW_COLOR: [15,5,40],
     AMBIENT: [50,25,90],
-    STARS: window.matchMedia('(max-width: 768px)').matches ? 150 : 320,
+    STARS: window.matchMedia('(max-width: 768px)').matches ? 100 : 320,
     PARALLAX_STRENGTH: 25,
     MOON: {
       radius: 0.08,
