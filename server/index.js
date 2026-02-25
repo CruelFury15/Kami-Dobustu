@@ -11,26 +11,14 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // CORS configuration for production
-const allowedOrigins = [
-  'https://kami-dobutsu.vercel.app',
-  'https://spirit-animal-zeta.vercel.app',
-  'http://localhost:5173',
-  'http://localhost:3000'
-];
-
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    // Check if origin is in allowed list or matches env variable
-    if (allowedOrigins.indexOf(origin) !== -1 || process.env.FRONTEND_URL === origin) {
-      callback(null, true);
-    } else {
-      // Still allow but log warning
-      console.warn('⚠️  Request from non-whitelisted origin:', origin);
-      callback(null, true);
-    }
+    // For now, allow all origins to debug CORS issues
+    console.log('🌐 CORS request from origin:', origin);
+    callback(null, true);
   },
   credentials: true,
   optionsSuccessStatus: 200
