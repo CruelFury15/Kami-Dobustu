@@ -487,28 +487,53 @@ a:hover {
       display: block;
       width: 100%;
       font-family: 'serif';
-      padding: 15px;
+      padding: 15px 20px;
       margin: 10px 0;
-      border: 1px solid #ccc;
-      background: #0e0121;
-      border-radius: 12px;
-      color: #F8F3E6;
-      font-family: serif;
-      font-size: 1rem;
+      font-size: 1.1rem;
+      font-weight: 500;
+      border: 2px solid rgba(252, 211, 77, 0.3);
+      border-radius: 15px;
+      background: rgba(15, 15, 35, 0.85);
+      color: #f3f4f6;
       cursor: pointer;
       transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 10;
       pointer-events: auto;
     }
 
     .ansbutton:hover {
-      background: linear-gradient(135deg, #fcd34d, #f59e0b);
-      color: #150135;
+      background: rgba(252, 211, 77, 0.9);
+      color: #000;
+      border-color: #fcd34d;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(252, 211, 77, 0.4);
+    }
+
+    .ansbutton:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
 
     @media (max-width: 768px) {
       .ansbutton {
         padding: 12px;
         font-size: 0.95rem;
+        background: rgba(15, 15, 35, 0.95);
+        backdrop-filter: blur(15px);
+        margin: 8px 0;
+      }
+      
+      .questionbox {
+        margin: 1.5rem auto;
+        padding: 1.5rem;
+        max-width: 90%;
+        background: rgba(15, 15, 35, 0.96);
+        backdrop-filter: blur(25px);
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
       }
     }
 
@@ -516,6 +541,15 @@ a:hover {
       .ansbutton {
         padding: 10px;
         font-size: 0.9rem;
+        margin: 6px 0;
+      }
+      
+      .questionbox {
+        margin: 1rem;
+        padding: 1rem;
+        max-width: 95%;
+        background: rgba(15, 15, 35, 0.98);
+        backdrop-filter: blur(30px);
       }
     }
 
@@ -523,15 +557,13 @@ a:hover {
       max-width: 800px;
       margin: 2rem auto;
       padding: 2rem;
-      font-family: 'serif';
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 20px;
-      -webkit-backdrop-filter: blur(10px);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      text-align: center;
-      pointer-events: auto;
+      background: rgba(15, 15, 35, 0.92);
+      border: 2px solid rgba(252, 211, 77, 0.2);
+      border-radius: 25px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 5;
     }
 
     @media (max-width: 768px) {
