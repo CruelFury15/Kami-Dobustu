@@ -13,6 +13,36 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+}
+
+
+*::-webkit-scrollbar {
+  width: 0px;
+  display: none;
+}
+
+
+*::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #fcd34d, #f59e0b);
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #f59e0b, #fcd34d);
 }
 
 a {
@@ -28,17 +58,26 @@ a:hover {
       margin: 0;
       padding: 0;
       min-height: 100vh;
-      max-height: 100vh;
-      overflow: hidden;
       background: linear-gradient(135deg, #0d1b1ecc, #0e0121, #352353);
       color: #F8F3E6;
       font-family: serif;
+      cursor: default;
+    }
+
+    body.scrollable {
+      overflow-y: auto;
+      position: relative;
+      max-height: none;
+    }
+
+    body.no-scroll {
+      max-height: 100vh;
+      overflow: hidden;
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      cursor: default;
     }
 
     body::before {
@@ -86,6 +125,13 @@ a:hover {
       overflow: hidden;
     }
 
+    body.scrollable #root {
+      position: relative;
+      overflow-y: auto;
+      min-height: 100vh;
+      height: auto;
+    }
+
     #root > * {
       pointer-events: auto;
     }
@@ -109,17 +155,18 @@ a:hover {
     }
 
     .title {
-      margin-top: 2rem;
+      margin-top: 1rem;
       font-weight:bold;
       color: linear-gradient(135deg, #241439fd, #ffd998);
-      font-size: clamp(3rem, 10vw, 7rem);
+      font-size: clamp(2.5rem, 8vw, 6rem);
       font-family: serif;
       font-style: italic;
       text-shadow: 0 0 15px rgba(38, 24, 45, 0.8),
                     0 0 30px rgba(44, 41, 45, 0.6),
                     0 0 50px rgba(250, 204, 21, 0.4);
       text-align:center;
-      margin-bottom: 2rem ;
+      margin-bottom: 1rem;
+      padding: 0 1rem;
     }
 
     .title p {
@@ -159,15 +206,16 @@ a:hover {
 
     .smalltitle {
       color: #fcd34d;
-      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      font-size: clamp(1.8rem, 3vw, 2rem);
       font-family: 'serif';
       text-shadow: 0 0 10px rgba(252, 211, 77, 0.8),
                    0 0 20px rgba(245, 158, 11, 0.6),
                    0 0 30px rgba(250, 204, 21, 0.4);
       text-align: center;
-      margin: 1rem auto;
+      margin: 0.8rem auto;
       letter-spacing: 0.05em;
       font-weight: 700;
+      padding: 0 1rem;
     }
 
     .describe {
@@ -175,7 +223,7 @@ a:hover {
       color: linear-gradient(135deg, #241439fd, #ffd998);
     }
     .chinsetext{
-      font-size: 40px;
+      font-size: clamp(2rem, 5vw, 3rem);
       color: #fcd34d;
       font-weight:bold;
       font-family: serif;
@@ -185,18 +233,26 @@ a:hover {
                    0 0 50px rgba(250, 204, 21, 0.4);
       text-align: center;
       font-weight: 900;
+      margin-bottom: 1rem;
     }
     .question {
       color: rgb(255, 255, 255);
-      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      font-size: clamp(1.3rem, 2.7vw, 1.7rem);
       font-family: 'serif';
+      font-style: italic;
       text-shadow: 0 0 8px rgba(180, 160, 220, 0.4);
       text-align: center;
       margin: 0.8rem auto;
-      max-width: 700px;
+      max-width: 90%;
       line-height: 1.6;
-      padding: 0 1rem;
+      padding: 0 1.5rem;
       font-weight: 700;
+    }
+
+    @media (min-width: 768px) {
+      .question {
+        max-width: 700px;
+      }
     }
 
     .image {
@@ -211,25 +267,39 @@ a:hover {
     }
 
     .ritual-button {
-      position: fixed;
-      bottom: 100px;
-      left: 42.7%;
+      position: relative;
       font-family: 'serif';
-      transform: translateX(-50%);
-      z-index: 11;
-      margin-top: 40px;
-      background: transparent;
-      color: #fcd34d;
-      padding: 14px 20px;
+      z-index: 10;
+      margin-top: 10rem;
+      background: linear-gradient(135deg, #fff3a16d, #ffbb985b);
+      color: #ffc400;
+      padding: 12px 1px;
       border-radius: 30px;
       font-weight: 800;
       letter-spacing: 0.08em;
-      border: 3px solid #fcd34d;
+      border: 2px solid #220b367a;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
       box-shadow: none;
-      transition: all 0.3s ease;
+      transition: all 0.5s ease;
       pointer-events: auto;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 768px) {
+      .ritual-button {
+        padding: 12px 24px;
+        font-size: 0.95rem;
+        margin-top: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .ritual-button {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+        margin-top: 1rem;
+      }
     }
 
     .ritual-button:hover {
@@ -251,16 +321,26 @@ a:hover {
       z-index: 100;
       background: linear-gradient(135deg, #241439fd, #ffd998);
       color: #ffffff;
-      padding: 20px 40px;
+      padding: 15px 30px;
       border-radius: 16px;
       font-family: serif;
-      font-size: 1.1rem;
+      font-size: clamp(0.9rem, 2vw, 1.1rem);
       box-shadow: 0 20px 40px rgba(0,0,0,0.3), 0 0 40px rgba(252, 211, 77, 0.4);
+      -webkit-backdrop-filter: blur(15px);
       backdrop-filter: blur(15px);
       border: 2px solid rgba(200, 160, 255, 0.6);
       pointer-events: none;
       text-align: center;
       max-width: 90%;
+      width: auto;
+    }
+
+    @media (max-width: 480px) {
+      .audio-alert {
+        top: 20px;
+        padding: 12px 20px;
+        font-size: 0.85rem;
+      }
     }
 
     .audio-alert p {
@@ -290,6 +370,20 @@ a:hover {
       color: #150135;
     }
 
+    @media (max-width: 768px) {
+      .ansbutton {
+        padding: 12px;
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .ansbutton {
+        padding: 10px;
+        font-size: 0.9rem;
+      }
+    }
+
     .questionbox {
       max-width: 800px;
       margin: 2rem auto;
@@ -297,11 +391,28 @@ a:hover {
       font-family: 'serif';
       background: rgba(255, 255, 255, 0.05);
       border-radius: 20px;
+      -webkit-backdrop-filter: blur(10px);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
       text-align: center;
       pointer-events: auto;
+    }
+
+    @media (max-width: 768px) {
+      .questionbox {
+        margin: 1.5rem auto;
+        padding: 1.5rem;
+        max-width: 90%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .questionbox {
+        margin: 1rem;
+        padding: 1rem;
+        max-width: 95%;
+      }
     }
 
     .torii {
@@ -326,6 +437,7 @@ a:hover {
       right: 0;
       bottom: 0;
       background: rgba(0, 0, 0, 0.9);
+      -webkit-backdrop-filter: blur(10px);
       backdrop-filter: blur(10px);
       z-index: 1000;
       display: flex;
@@ -439,3 +551,13 @@ a:hover {
       animation: breathe 3s ease-in-out infinite;
       pointer-events: none;
     }
+
+    body.scrollable #root {
+    overflow-y: auto;
+    scrollbar-width: none; 
+    -ms-overflow-style: none; 
+}
+
+    body.scrollable #root::-webkit-scrollbar {
+    display: none; 
+}

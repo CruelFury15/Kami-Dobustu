@@ -14,6 +14,10 @@ function Questions() {
   const [answers, setAnswers] = useState([]);
 
   useEffect(() => {
+    // Enable scrolling on questions page
+    document.body.classList.add('scrollable');
+    document.body.classList.remove('no-scroll');
+
     audioManager.playBackgroundMusic();
 
     const enableAudio = () => {

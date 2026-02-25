@@ -8,6 +8,9 @@ function Home() {
     const [showAlert, setShowAlert] = useState(false);
 
     useEffect(() => {
+        document.body.classList.add('no-scroll');
+        document.body.classList.remove('scrollable');
+
         const showTimer = setTimeout(() => {
             setShowAlert(true);
         }, 1000);
@@ -54,13 +57,17 @@ function Home() {
                 </Motion.div>
             )}
 
-            <div className="relative flex min-h-screen flex-col items-center justify-center px-4">
-            <Motion.div className = "chinsetext" initial={{opacity:0, y: 20}}
-                        animate={{opacity:1, y: 0}}
-                        transition={{delay:0.5, duration:2}}>
-                            神 動 物
-            </Motion.div>
-                <div className="title flex items-center justify-center">
+            <div className="relative flex min-h-screen flex-col items-center justify-center px-4 py-8">
+                <Motion.div 
+                    className="chinsetext" 
+                    initial={{opacity:0, y: 20}}
+                    animate={{opacity:1, y: 0}}
+                    transition={{delay:0.5, duration:2}}
+                >
+                    神 動 物
+                </Motion.div>
+
+                <div className="title flex items-center justify-center w-full">
                     <Motion.h1
                         initial={{opacity:0, y: 20}}
                         animate={{opacity:1, y: 0}}
@@ -70,7 +77,7 @@ function Home() {
                     </Motion.h1>
                 </div>
 
-                <div className="subtitle-container">
+                <div className="subtitle-container w-full">
                     <Motion.p 
                         className="smalltitle" 
                         initial={{opacity:0}}
@@ -81,7 +88,7 @@ function Home() {
                     </Motion.p>
                 </div>
 
-                <div className="description-container">
+                <div className="description-container w-full">
                     <Motion.p 
                         className="question" 
                         initial={{opacity:0}}
@@ -92,21 +99,23 @@ function Home() {
                     </Motion.p>
                 </div>
 
-                <Motion.button
-                    onClick={handleButtonClick}
-                    initial={{y:0}}
-                    animate={{scale: [1, 1.15, 1] }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,       
-                      repeatType: "loop"      
-                    }}
-                    whileHover={{ scale: 1.15 }}
-                    whileTap={{ scale: 0.90 }}
-                    className="ritual-button"
-                  >
-                    🌟 Enter The Rite 🌟
-                  </Motion.button>
+                <div className="flex justify-center w-full">
+                    <Motion.button
+                        onClick={handleButtonClick}
+                        initial={{y:0}}
+                        animate={{scale: [1, 1.15, 1] }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,       
+                          repeatType: "loop"      
+                        }}
+                        whileHover={{ scale: 1.15 }}
+                        whileTap={{ scale: 0.90 }}
+                        className="ritual-button"
+                    >
+                        🌟 Enter The Rite 🌟
+                    </Motion.button>
+                </div>
             </div>
         </>
     );

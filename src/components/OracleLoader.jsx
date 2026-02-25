@@ -54,7 +54,7 @@ const OracleLoader = () => {
         position: 'relative',
         width: '100%',
         maxWidth: '600px',
-        padding: '20px'
+        padding: '-20px'
       }}>
       
       <Motion.div 
@@ -69,7 +69,7 @@ const OracleLoader = () => {
           background: 'radial-gradient(circle at 30% 30%, #fcd34d, #f59e0b, #d97706)',
           boxShadow: '0 0 60px rgba(252, 211, 77, 0.8), inset -20px -20px 40px rgba(0,0,0,0.2)',
           position: 'relative',
-          marginBottom: '60px'
+          marginBottom: '-50px'
         }}
       >
         <div style={{

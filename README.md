@@ -2,17 +2,20 @@
 
 **Discover Your Spirit Animal Through Ancient Mystical Rituals**
 
-A beautifully crafted interactive web experience that guides users through a mystical journey to discover their spirit animal. Built with React and featuring stunning cosmic animations, atmospheric audio, AI-powered spirit animal generation, and traditional Japanese temple aesthetics.
+A beautifully crafted interactive web experience that guides users through a mystical journey to discover their spirit animal. Built with React 19 and featuring stunning cosmic animations, atmospheric audio, AI-powered personality analysis with Google Gemini, AI-generated spirit animal imagery with Imagen 3, and traditional Japanese temple aesthetics.
+
 
 ## ✨ Features
 
 ### 🎨 Visual Experience
 - **Cosmic Background Animations**: Dynamic stars, moon, volumetric clouds, and god rays using HTML5 Canvas
+- **3D Spirit Animal Display**: Interactive 3D animated spirit animal with glowing effects and corner sparkles
 - **Torii Temple Gate**: Traditional Japanese temple pillars with ethereal purple gradients
 - **Smooth Transitions**: Framer Motion animations for seamless page transitions
 - **Responsive Design**: Fully responsive layout that works on all devices
-- **No Scrolling**: Content perfectly fits viewport for immersive experience
+- **Scrollable Results Page**: Beautiful custom gold scrollbar for exploring detailed insights
 - **Mystical Loading Screens**: Beautiful Oracle loader with animated moon and mystical symbols
+- **Floating Particles**: Atmospheric particle effects throughout the experience
 
 ### 🔊 Audio Experience
 - **Background Music**: Atmospheric looping soundtrack that plays throughout the experience
@@ -23,10 +26,11 @@ A beautifully crafted interactive web experience that guides users through a mys
 ### 🤖 AI-Powered Oracle Backend
 - **Express.js Server**: RESTful API for spirit animal determination
 - **Gemini AI Integration**: Advanced AI analysis of user responses for personalized results
-- **Imagen 3 Support**: AI-generated mystical animal images with sacred geometry and cosmic backgrounds
-- **2K Resolution Images**: High-quality mystical artwork with divine lighting and volumetric effects
+- **Deep Personality Analysis**: Full paragraph analyzing decision-making patterns and emotional landscape
+- **Imagen 3 Support**: AI-generated mystical animal images with cosmic backgrounds
+- **Photorealistic 3D Images**: High-quality mystical artwork with cinematic lighting
 - **Environment Variables**: Secure API key management
-- **Fallback Logic**: Works offline with local algorithms and mystical placeholders
+- **Fallback Logic**: Works offline with local algorithms and beautiful animated placeholders
 - **Mystical Loading**: Beautiful loading screens during AI consultation
 - **CORS Enabled**: Secure cross-origin requests
 
@@ -36,18 +40,29 @@ A beautifully crafted interactive web experience that guides users through a mys
 - **Moral Dilemmas**: Questions create genuine internal conflict and self-reflection
 - **Visual Progress Tracker**: Numbered circles showing current question progress
 - **Smooth Question Transitions**: Animated question changes with fade effects
-- **Results Page**: Personalized spirit animal reveal with traits, element, and mystical imagery
+- **Analysis Page**: Intermediate page showing elemental breakdown and journey stats
+- **Interactive Results Page**: 4 detailed tabs with comprehensive personality insights
+
+### 📊 Detailed Results Page
+- **Overview Tab**: Spirit essence, element, traits count, and all sacred traits
+- **Deep Analysis Tab**: Full AI-generated personality paragraph and life philosophy
+- **Strengths & Challenges Tab**: 4 strengths, 4 growth areas, and spirit compatibility
+- **Spiritual Guidance Tab**: Mystical guidance and 4 practice recommendations
+- **Scroll Indicator**: Animated prompt to explore more content
+- **Custom Scrollbar**: Beautiful gold gradient scrollbar matching the cosmic theme
 
 ### 🏗️ Technical Stack
-- **React 18**: Modern React with hooks
-- **React Router**: Client-side routing
-- **Framer Motion**: Smooth animations and transitions
+- **React 19**: Modern React with hooks and latest features
+- **React Router DOM**: Client-side routing with smooth transitions
+- **Framer Motion**: Advanced animations and transitions
 - **Howler.js**: Professional audio management
-- **Tailwind CSS**: Utility-first styling
-- **Vite**: Lightning-fast build tool
+- **Tailwind CSS 4**: Utility-first styling with latest features
+- **Vite 7**: Lightning-fast build tool and HMR
 - **HTML5 Canvas**: Custom background animations with Simplex noise
 - **Google Generative AI**: Gemini 1.5 Flash for spirit animal analysis
 - **Google Vertex AI**: Imagen 3 for mystical image generation
+- **Express.js**: Backend API server
+- **Node.js**: Runtime environment
 
 ## 🚀 Getting Started
 
@@ -135,21 +150,22 @@ kami-dobutsu/
 ├── src/
 │   ├── assets/         # Images and icons
 │   ├── components/     # Reusable React components
-│   │   ├── Clouds.jsx  # Animated cloud background
-│   │   └── OracleLoader.jsx # 🔮 Mystical loading screen
+│   │   ├── Clouds.jsx          # Animated cloud background
+│   │   ├── OracleLoader.jsx    # 🔮 Mystical loading screen
+│   │   └── SpiritAnimal3D.jsx  # 3D animated spirit animal display
 │   ├── data/           # Question data
 │   │   └── question.js # 60 philosophical questions
 │   ├── pages/          # Page components
-│   │   ├── Home.jsx    # Landing page with temple gate
-│   │   ├── Questions.jsx # Enhanced quiz with 8 questions
-│   │   ├── QuizProgress.jsx # Progress indicator
-│   │   └── Results.jsx # AI-powered results with mystical imagery
+│   │   ├── Home.jsx        # Landing page with temple gate
+│   │   ├── Questions.jsx   # Enhanced quiz with 8 questions
+│   │   ├── Analysis.jsx    # Analysis page with stats and loading
+│   │   └── Results.jsx     # Interactive results with 4 tabs
 │   ├── utils/          # Utility functions
 │   │   ├── audioManager.js # Audio management
-│   │   └── api.js      # 🌐 Backend API integration
-│   ├── App.jsx         # Main app component
+│   │   └── api.js          # 🌐 Backend API integration
+│   ├── App.jsx         # Main app component with routing
 │   ├── main.jsx        # Entry point
-│   └── index.css       # Global styles
+│   └── index.css       # Global styles with custom scrollbar
 ├── test-oracle.js      # Backend testing utility
 ├── index.html          # HTML template with canvas animations
 └── package.json        # Frontend dependencies and scripts
@@ -161,9 +177,15 @@ kami-dobutsu/
 2. **Audio Alert**: A friendly notification appears asking users to enable sound
 3. **Enhanced Quiz Journey**: Users answer 8 carefully selected questions that create moral dilemmas and force decisive choices
 4. **Progress Tracking**: Visual circles show progress through the quiz
-5. **AI Oracle Consultation**: Gemini AI analyzes responses to determine the perfect spirit animal match
-6. **Mystical Results**: Users discover their spirit animal with AI-generated imagery, traits, element, and personalized description
-7. **Sacred Vision**: Optional display of the AI image generation prompt for transparency
+5. **Analysis Page**: Intermediate page showing elemental breakdown, journey stats, and mystical loading animations
+6. **AI Oracle Consultation**: Gemini AI analyzes responses to determine the perfect spirit animal match
+7. **Interactive Results**: Users discover their spirit animal with 4 detailed tabs:
+   - **Overview**: Spirit essence, element, and sacred traits
+   - **Deep Analysis**: Full personality paragraph and life philosophy
+   - **Strengths & Challenges**: Personal strengths, growth areas, and compatibility
+   - **Spiritual Guidance**: Mystical guidance and practice recommendations
+8. **3D Spirit Display**: Interactive 3D animated spirit animal with glowing effects
+9. **Scrollable Experience**: Beautiful custom scrollbar for exploring all content
 
 ## 🧠 AI-Powered Features
 
@@ -171,13 +193,39 @@ kami-dobutsu/
 - Analyzes user responses for patterns in values, emotional tendencies, and decision-making
 - Considers how users handle conflict, suffering, and difficult choices
 - Determines core personality traits and spiritual essence
+- Generates detailed personality analysis (5-7 sentences)
+- Creates personalized life philosophy and spiritual guidance
+- Identifies strengths and growth challenges
+- Determines spirit animal compatibility
 - Selects from any real animal in nature (no limitations)
 
 ### Imagen 3 Image Generation
-- Creates divine cosmic guardian representations of spirit animals
-- Features sacred geometry, mystical sigils, and celestial environments
-- Ultra-detailed anatomy with glowing spiritual energy
-- 2K resolution with cinematic lighting and volumetric effects
+- Creates photorealistic 3D spirit animal images
+- Mystical cosmic environments with purple and gold nebula clouds
+- Soft glowing moonlight and ethereal mist
+- Stardust particles and magical atmosphere
+- Cinematic lighting and depth
+- Simplified prompts for better image quality
+
+### Enhanced AI Response Format
+```json
+{
+  "animal": "Spirit animal name",
+  "title": "Profound poetic title",
+  "description": "Two revelatory sentences",
+  "detailedAnalysis": "Full personality paragraph (5-7 sentences)",
+  "traits": ["8 specific traits"],
+  "strengths": ["4 specific strengths"],
+  "challenges": ["4 growth areas"],
+  "element": "Fire/Water/Earth/Air/Spirit",
+  "lifePhilosophy": "Core life philosophy statement",
+  "spiritualGuidance": "Mystical guidance for the journey",
+  "compatibility": {
+    "highCompatibility": ["2 compatible animals"],
+    "lowCompatibility": ["2 challenging animals"]
+  }
+}
+```
 
 ### Question Design Philosophy
 - 60 deep philosophical questions covering existential themes
@@ -257,23 +305,56 @@ PORT=3001
 
 ## 🌟 Key Features Implementation
 
+### 3D Spirit Animal Display
+- Interactive 3D component with hover effects
+- Pulsing glow animation around the image
+- Corner sparkles that fade in and out
+- Element-based color theming
+- Animated emoji placeholders when no image is available
+- Smooth entrance animations with spring physics
+
 ### AI-Powered Spirit Analysis
 - Gemini AI processes user responses to identify personality patterns
 - Analyzes decision-making style, values, and emotional tendencies
+- Generates detailed personality analysis paragraph
+- Creates personalized life philosophy
+- Provides spiritual guidance for the journey
+- Identifies strengths and growth challenges
+- Determines spirit animal compatibility
 - Matches users with any real animal from nature
-- Generates personalized descriptions and trait lists
+
+### Interactive Results Page
+- **4 Tab Navigation**: Overview, Analysis, Strengths, Guidance
+- **Smooth Tab Switching**: Animated transitions between tabs
+- **Scrollable Content**: Custom gold gradient scrollbar
+- **Scroll Indicator**: Animated prompt that auto-hides after scrolling
+- **Floating Particles**: 20 animated particles in gold, purple, and blue
+- **Responsive Grid Layouts**: Adapts to all screen sizes
+- **Glass-morphism Effects**: Backdrop blur and transparency
+
+### Analysis Page
+- **Elemental Breakdown**: Shows Fire, Water, Earth, Air percentages
+- **Animated Progress Bars**: Smooth fill animations
+- **Journey Stats**: Choices made and paths revealed
+- **Mystical Orb**: Rotating and pulsing crystal ball animation
+- **Phase Transitions**: 4 phases of analysis text
+- **Auto-navigation**: Proceeds to results after 4.5 seconds
 
 ### Enhanced Question System
 - 60 carefully crafted philosophical questions
 - Dynamic selection of 8 questions per session
 - No passive options - forces decisive action choices
 - Creates genuine moral dilemmas and internal conflict
+- Visual progress tracker with numbered circles
+- Smooth question transitions with fade effects
 
 ### Mystical Image Generation
-- Imagen 3 creates divine cosmic guardian representations
-- Sacred geometry mandalas and mystical sigils
-- Celestial environments with nebula clouds and cosmic dust
-- 2K resolution with cinematic lighting effects
+- Simplified prompts for better Imagen 3 results
+- Photorealistic 3D rendered animals
+- Cosmic space environments (purple, gold, nebula)
+- Soft glowing moonlight and ethereal mist
+- Stardust particles and magical atmosphere
+- Cinematic lighting for depth and realism
 
 ### Background Animations
 Custom HTML5 Canvas implementation with:
