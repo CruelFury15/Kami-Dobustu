@@ -372,7 +372,7 @@ a:hover {
     }
     .question {
       color: rgb(255, 255, 255);
-      font-size: clamp(1.3rem, 2.7vw, 1.7rem);
+      font-size: clamp(1.0rem, 2.0vw, 1.0rem);
       font-family: 'serif';
       font-style: italic;
       text-shadow: 0 0 8px rgba(180, 160, 220, 0.4);
