@@ -585,7 +585,7 @@ a:hover {
     .torii {
       position: fixed; bottom: -5px; left: 50%;
       transform: translateX(-50%);
-      z-index: 9; pointer-events: none;
+      z-index: 3; pointer-events: none;
       filter: drop-shadow(0 0 30px rgba(180,140,255,0.3)) drop-shadow(0 0 60px rgba(120,80,200,0.15));
     }
 
