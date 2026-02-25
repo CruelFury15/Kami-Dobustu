@@ -161,8 +161,8 @@ a:hover {
 
     #bg-canvas    { z-index: 0; }
     #star-canvas  { z-index: 1; }
-    #moon-canvas  { z-index: 2; }
-    #cloud-canvas { z-index: 3; }
+    #cloud-canvas { z-index: 2; }  /* Moved behind content */
+    #moon-canvas  { z-index: 3; }
     #ray-canvas   { z-index: 4; mix-blend-mode: screen; }
     #glow-canvas  { z-index: 5; mix-blend-mode: screen; }
     #fg-canvas    { z-index: 6; mix-blend-mode: screen; }
