@@ -5,7 +5,9 @@ import { fetchOracleResult } from '../utils/api';
 import OracleLoader from '../components/OracleLoader';
 import SpiritAnimal3D from '../components/SpiritAnimal3D';
 
-const PARTICLES = [...Array(20)].map(() => ({
+// Reduce particles on mobile for performance
+const isMobile = window.innerWidth <= 768;
+const PARTICLES = [...Array(isMobile ? 5 : 20)].map(() => ({
   xOffset: Math.random() * 40 - 20,
   duration: 5 + Math.random() * 3,
   delay: Math.random() * 4,

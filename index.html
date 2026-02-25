@@ -3,8 +3,21 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/src/assets/logo.jpeg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Kami Dōbutsu</title>
+    <style>
+      /* Hide heavy canvas elements on mobile */
+      @media (max-width: 768px) {
+        #ray-canvas, #glow-canvas, #cloud-canvas {
+          display: none !important;
+        }
+        canvas {
+          image-rendering: pixelated;
+          image-rendering: -moz-crisp-edges;
+          image-rendering: crisp-edges;
+        }
+      }
+    </style>
   </head>
   <body>
 

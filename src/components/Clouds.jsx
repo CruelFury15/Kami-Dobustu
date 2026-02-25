@@ -3,8 +3,12 @@ import { gsap } from 'gsap';
 
 function Clouds() {
   const cloudsRef = useRef([]);
+  const isMobile = window.innerWidth <= 768;
 
   useEffect(() => {
+    // Skip heavy animations on mobile
+    if (isMobile) return;
+    
     cloudsRef.current.forEach((cloud, index) => {
       if (cloud) {
         if (index < 6) {
@@ -73,10 +77,10 @@ function Clouds() {
         }
       }
     });
-  }, []);
+  }, [isMobile]);
 
   return (
-    <div style={{ 
+    <div className={isMobile ? 'mobile-hide' : ''} style={{ 
       position: 'fixed', 
       top: 0, 
       left: 0, 

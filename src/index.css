@@ -16,6 +16,33 @@
   scroll-behavior: smooth;
 }
 
+/* Mobile performance optimizations */
+@media (max-width: 768px) {
+  * {
+    transform: translateZ(0);
+    will-change: auto;
+  }
+  
+  /* Reduce animations on mobile */
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  /* Hide heavy animations on mobile */
+  .mobile-hide {
+    display: none !important;
+  }
+  
+  /* Reduce canvas quality on mobile */
+  canvas {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
