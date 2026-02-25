@@ -105,12 +105,12 @@ const Results = memo(() => {
         />
       ))}
 
-      <Motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        <Motion.div initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8 }} style={{ textAlign: 'center', marginBottom: '40px' }}>
+      <Motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ maxWidth: 'min(900px, 95%)', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+        <Motion.div initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8 }} style={{ textAlign: 'center', marginBottom: 'clamp(20px, 5vw, 40px)' }}>
           <SpiritAnimal3D animal={spiritAnimal.animal} element={spiritAnimal.element} imageUrl={spiritAnimal.imageUrl} />
-          <Motion.h1 initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5, type: "spring", bounce: 0.5 }} style={{ fontSize: '3.5rem', color: '#fcd34d', marginTop: '30px', marginBottom: '10px', textShadow: '0 0 30px rgba(252, 211, 77, 0.8)', fontFamily: 'serif', fontWeight: 'bold' }}>{spiritAnimal.animal}</Motion.h1>
-          <Motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} style={{ fontSize: '1.5rem', color: '#d1d5db', fontStyle: 'italic', marginBottom: '20px' }}>{spiritAnimal.title}</Motion.h2>
-          <Motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.9 }} style={{ width: '300px', height: '3px', background: 'linear-gradient(90deg, transparent, #fcd34d, transparent)', margin: '0 auto', boxShadow: '0 0 15px rgba(252, 211, 77, 0.6)' }} />
+          <Motion.h1 initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5, type: "spring", bounce: 0.5 }} style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: '#fcd34d', marginTop: 'clamp(20px, 5vw, 30px)', marginBottom: '10px', textShadow: '0 0 30px rgba(252, 211, 77, 0.8)', fontFamily: 'serif', fontWeight: 'bold' }}>{spiritAnimal.animal}</Motion.h1>
+          <Motion.h2 initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }} style={{ fontSize: 'clamp(1.2rem, 4vw, 1.5rem)', color: '#d1d5db', fontStyle: 'italic', marginBottom: 'clamp(15px, 3vw, 20px)' }}>{spiritAnimal.title}</Motion.h2>
+          <Motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.9 }} style={{ width: 'min(200px, 60%)', height: '3px', background: 'linear-gradient(90deg, transparent, #fcd34d, transparent)', margin: '0 auto', boxShadow: '0 0 15px rgba(252, 211, 77, 0.6)' }} />
         </Motion.div>
 
         <Motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1 }} style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginBottom: '40px', flexWrap: 'wrap' }}>
@@ -126,7 +126,7 @@ const Results = memo(() => {
             <div>
               <h3 style={{ color: '#fcd34d', fontSize: '2rem', marginBottom: '20px', textAlign: 'center' }}>🔮 Your Spirit Essence</h3>
               <p style={{ color: '#e5e7eb', fontSize: '1.1rem', lineHeight: '1.8', marginBottom: '30px', textAlign: 'center' }}>{spiritAnimal.description}</p>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginTop: '30px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'clamp(15px, 3vw, 20px)', marginTop: 'clamp(20px, 4vw, 30px)' }}>
                 <div style={{ padding: '25px', background: 'rgba(252, 211, 77, 0.1)', borderRadius: '15px', border: '2px solid rgba(252, 211, 77, 0.3)', textAlign: 'center' }}>
                   <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>{spiritAnimal.element === 'Fire' ? '🔥' : spiritAnimal.element === 'Water' ? '💧' : spiritAnimal.element === 'Earth' ? '🌍' : spiritAnimal.element === 'Air' ? '💨' : '✨'}</div>
                   <div style={{ color: '#fcd34d', fontSize: '1.3rem', fontWeight: 'bold' }}>{spiritAnimal.element}</div>
@@ -172,7 +172,7 @@ const Results = memo(() => {
           {activeTab === 'strengths' && (
             <div>
               <h3 style={{ color: '#fcd34d', fontSize: '2rem', marginBottom: '30px', textAlign: 'center' }}>⚡ Strengths & Growth Areas</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '25px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 'clamp(20px, 4vw, 25px)' }}>
                 <div>
                   <h4 style={{ color: '#4facfe', fontSize: '1.5rem', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>💪 Your Strengths</h4>
                   {spiritAnimal.strengths?.map((strength, index) => (
@@ -189,7 +189,7 @@ const Results = memo(() => {
               {spiritAnimal.compatibility && (
                 <div style={{ marginTop: '40px' }}>
                   <h4 style={{ color: '#fcd34d', fontSize: '1.5rem', marginBottom: '20px', textAlign: 'center' }}>🤝 Spirit Compatibility</h4>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'clamp(15px, 3vw, 20px)' }}>
                     <div style={{ padding: '20px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '15px', border: '2px solid rgba(34, 197, 94, 0.3)', textAlign: 'center' }}>
                       <div style={{ fontSize: '2rem', marginBottom: '10px' }}>💚</div>
                       <div style={{ color: '#22c55e', fontSize: '1.1rem', fontWeight: 'bold', marginBottom: '10px' }}>High Compatibility</div>
@@ -213,7 +213,7 @@ const Results = memo(() => {
                 <div style={{ position: 'absolute', top: '20px', right: '20px', fontSize: '4rem', opacity: 0.1 }}>🌟</div>
                 <p style={{ color: '#e5e7eb', fontSize: '1.2rem', lineHeight: '2', textAlign: 'center', fontStyle: 'italic', position: 'relative', zIndex: 1 }}>{spiritAnimal.spiritualGuidance || "Trust your journey. The path you walk is uniquely yours, and every step brings you closer to your true self."}</p>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginTop: '30px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 'clamp(15px, 3vw, 20px)', marginTop: 'clamp(20px, 4vw, 30px)' }}>
                 {[
                   { icon: '🧘', title: 'Meditation', text: 'Connect with your inner spirit' },
                   { icon: '🌿', title: 'Nature', text: 'Find peace in natural spaces' },
