@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Home from './pages/Home';
 import Questions from './pages/Questions';
 import Results from './pages/Results';
+import MusicControl from './components/MusicControl';
 
 function App() {
   const location = useLocation();
@@ -13,11 +14,14 @@ function App() {
   }, [location.pathname]);
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/questions" element={<Questions />} />
-      <Route path="/results" element={<Results />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/questions" element={<Questions />} />
+        <Route path="/results" element={<Results />} />
+      </Routes>
+      <MusicControl />
+    </>
   )
 }
 

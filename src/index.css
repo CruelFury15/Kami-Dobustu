@@ -89,6 +89,23 @@ a:hover {
       color: #F8F3E6;
       font-family: serif;
       cursor: default;
+      /* Responsive font sizes */
+      font-size: clamp(14px, 2vw, 16px);
+    }
+
+    /* Responsive body adjustments */
+    @media (max-width: 768px) {
+      body {
+        font-size: 14px;
+        padding: 0;
+        margin: 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      body {
+        font-size: 13px;
+      }
     }
 
     body.scrollable {
@@ -147,9 +164,86 @@ a:hover {
       left: 0;
       right: 0;
       bottom: 0;
-      z-index: 10;
-      pointer-events: none;
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Responsive container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 0 10px;
+      }
+    }
+
+    /* Responsive text */
+    .responsive-text {
+      font-size: clamp(1rem, 2.5vw, 1.5rem);
+    }
+
+    .responsive-title {
+      font-size: clamp(1.5rem, 4vw, 3rem);
+    }
+
+    .responsive-subtitle {
+      font-size: clamp(1rem, 3vw, 1.5rem);
+    }
+
+    /* Responsive cards */
+    .responsive-card {
+      width: 100%;
+      max-width: 350px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 768px) {
+      .responsive-card {
+        max-width: 400px;
+      }
+    }
+
+    /* Responsive grid */
+    .responsive-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .responsive-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 15px;
+      }
+    }
+
+    /* Responsive flex */
+    .responsive-flex {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+      .responsive-flex {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
     }
 
     body.scrollable #root {
