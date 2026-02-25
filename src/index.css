@@ -161,11 +161,11 @@ a:hover {
 
     #bg-canvas    { z-index: 0; }
     #star-canvas  { z-index: 1; }
-    #cloud-canvas { z-index: 2; }  /* Moved behind content */
-    #moon-canvas  { z-index: 3; }
-    #ray-canvas   { z-index: 4; mix-blend-mode: screen; }
-    #glow-canvas  { z-index: 5; mix-blend-mode: screen; }
-    #fg-canvas    { z-index: 6; mix-blend-mode: screen; }
+    #cloud-canvas { z-index: 2; }  /* Behind content */
+    #moon-canvas  { z-index: 1; }  /* Behind content */
+    #ray-canvas   { z-index: 3; mix-blend-mode: screen; }  /* Behind content */
+    #glow-canvas  { z-index: 4; mix-blend-mode: screen; }  /* Behind content */
+    #fg-canvas    { z-index: 5; mix-blend-mode: screen; }  /* Behind content */
 
     #vignette {
       position: fixed; inset:0; z-index: 7; pointer-events: none;
