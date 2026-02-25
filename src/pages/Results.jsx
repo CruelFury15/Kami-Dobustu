@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion as Motion } from 'framer-motion';
 import { fetchOracleResult } from '../utils/api';
@@ -15,7 +15,7 @@ const PARTICLES = [...Array(isMobile ? 5 : 20)].map(() => ({
   left: Math.random() * 100
 }));
 
-const Results = () => {
+const Results = memo(() => {
   const location = useLocation();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
@@ -239,6 +239,6 @@ const Results = () => {
       </Motion.div>
     </div>
   );
-};
+});
 
 export default Results;

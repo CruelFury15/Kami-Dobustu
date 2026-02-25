@@ -120,18 +120,21 @@
 
   function fbm(x,y,z,octaves,lac,gain){let v=0,a=0.5,f=1;for(let i=0;i<octaves;i++){v+=a*SimplexNoise.noise3D(x*f,y*f,z*f);a*=gain;f*=lac;}return v;}
   const CFG = {
-    CLOUD_LAYERS: [
-      { z:0.15, count:4, sizeMin:600, sizeMax:1100, speed:0.08, dir:1,  opacity:0.40, detail:6, scale:0.0012, yRange:[0.10,0.55] },
-      { z:0.30, count:5, sizeMin:450, sizeMax:850,  speed:0.14, dir:-1, opacity:0.35, detail:5, scale:0.0016, yRange:[0.08,0.60] },
-      { z:0.50, count:6, sizeMin:300, sizeMax:600,  speed:0.22, dir:1,  opacity:0.30, detail:5, scale:0.0022, yRange:[0.05,0.65] },
-      { z:0.70, count:7, sizeMin:200, sizeMax:450,  speed:0.35, dir:-1, opacity:0.25, detail:4, scale:0.003,  yRange:[0.10,0.70] },
-      { z:0.90, count:5, sizeMin:120, sizeMax:300,  speed:0.50, dir:1,  opacity:0.15, detail:4, scale:0.004,  yRange:[0.15,0.65] },
+    CLOUD_LAYERS: window.matchMedia('(max-width: 768px)').matches ? [
+      { z:0.30, count: 3, sizeMin: 450, sizeMax: 850, speed: 0.14, dir: -1, opacity: 0.35, detail: 4, scale: 0.003, yRange: [0.10, 0.70] },
+      { z:0.70, count: 3, sizeMin: 200, sizeMax: 450, speed: 0.35, dir: -1, opacity: 0.25, detail: 3, scale: 0.003, yRange: [0.10, 0.70] },
+    ] : [
+      { z:0.15, count:4, sizeMin:600, sizeMax:1100, speed:0.08, dir:1, opacity:0.40, detail:6, scale:0.0012, yRange:[0.10,0.55] },
+      { z:0.30, count:5, sizeMin:450, sizeMax:850, speed:0.14, dir:-1, opacity:0.35, detail:5, scale:0.0016, yRange:[0.08,0.60] },
+      { z:0.50, count:6, sizeMin:300, sizeMax:600, speed:0.22, dir:1, opacity:0.30, detail:5, scale:0.0022, yRange:[0.05,0.65] },
+      { z:0.70, count:7, sizeMin:200, sizeMax:450, speed:0.35, dir:-1, opacity:0.25, detail:4, scale:0.003, yRange:[0.10,0.70] },
+      { z:0.90, count:5, sizeMin:120, sizeMax:300, speed:0.50, dir:1, opacity:0.15, detail:4, scale:0.004, yRange:[0.15,0.65] },
     ],
     LIGHT_DIR: { x:0.4, y:-0.6, z:0.65 },
     LIGHT_COLOR: [220,200,255],
     SHADOW_COLOR: [15,5,40],
     AMBIENT: [50,25,90],
-    STARS: 320,
+    STARS: window.matchMedia('(max-width: 768px)').matches ? 150 : 320,
     PARALLAX_STRENGTH: 25,
     MOON: {
       radius: 0.08,
@@ -180,7 +183,10 @@
   function resize() {
     W = window.innerWidth;
     H = window.innerHeight;
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Optimize DPR for mobile
+    dpr = window.matchMedia('(max-width: 768px)').matches 
+      ? 1 
+      : Math.min(window.devicePixelRatio || 1, 2);
 
     [bgC, starC, moonC, rayC, glowC].forEach(c => {
       c.width = W * dpr; c.height = H * dpr;
@@ -668,7 +674,10 @@
   let motes=[];
   function initMotes(){
     motes=[];
-    for(let i=0;i<60;i++){
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const motesCount = isMobile ? 20 : 60; // Reduce by 67% on mobile
+    
+    for(let i=0;i<motesCount;i++){
       motes.push({
         x:rand(0,W),y:rand(0,H),vx:rand(-0.2,0.2),vy:rand(-0.15,0.15),
         size:rand(1,4),alpha:rand(0.02,0.12),phase:rand(0,Math.PI*2),
@@ -710,6 +719,12 @@
 
   function animate(timestamp){
     requestAnimationFrame(animate);
+    
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    
+    // Skip frames on mobile to reduce CPU load
+    if(isMobile && frameCount % 2 !== 0) return;
+    
     const dt=Math.min(timestamp-lastTime,80);lastTime=timestamp;frameCount++;
     mouseX=lerp(mouseX,targetMX,0.03);mouseY=lerp(mouseY,targetMY,0.03);
 

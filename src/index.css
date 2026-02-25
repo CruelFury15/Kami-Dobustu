@@ -41,6 +41,20 @@
     image-rendering: -moz-crisp-edges;
     image-rendering: crisp-edges;
   }
+  
+  /* Optimize painting on mobile */
+  body {
+    contain: layout style paint;
+  }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 html {
