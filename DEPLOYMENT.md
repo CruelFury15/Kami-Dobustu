@@ -23,9 +23,9 @@
 4. **Add Environment Variables** in Render:
    - `PORT` = `3001`
    - `NODE_ENV` = `production`
-   - `GEMINI_API_KEY` = `AIzaSyAMA1veIBUaO3GOEZ-NBOZlmypRaqd2xno`
-   - `BYTEZ_API_KEY` = `edc1012a276c956de200d0f78e610bba`
-   - `FRONTEND_URL` = `*` (will update after Vercel deployment)
+   - `GEMINI_API_KEY` = ''
+   - `BYTEZ_API_KEY` = ''
+   - `FRONTEND_URL` = `*
 
 5. **Deploy**
    - Click "Create Web Service"
