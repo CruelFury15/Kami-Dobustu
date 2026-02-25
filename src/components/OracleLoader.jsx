@@ -43,7 +43,7 @@ const OracleLoader = () => {
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: 'transparent',
-      zIndex: 1000
+      zIndex: 1  // Much lower z-index to not interfere with questions
     }}>
       <div className="loader-container" style={{
         display: 'flex',
