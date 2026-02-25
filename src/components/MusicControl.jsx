@@ -3,7 +3,7 @@ import audioManager from '../utils/audioManager';
 import { useLocation } from 'react-router-dom';
 
 function MusicControl() {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(() => audioManager.isMusicPlaying());
   const [isVisible, setIsVisible] = useState(true);
   const location = useLocation();
 
@@ -17,8 +17,13 @@ function MusicControl() {
   }, []);
 
   const toggleMusic = () => {
-    const newState = audioManager.toggleBackgroundMusic();
-    setIsPlaying(newState);
+    try {
+      const newState = audioManager.toggleBackgroundMusic();
+      setIsPlaying(newState);
+      console.log('Music toggled, new state:', newState);
+    } catch (error) {
+      console.error('Error toggling music:', error);
+    }
   };
 
   // Show at top on Questions and Results pages, bottom on Home

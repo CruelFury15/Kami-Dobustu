@@ -93,7 +93,7 @@ class AudioManager {
     if (!this.initialized) this.init();
     
     if (this.backgroundMusic) {
-      if (this.backgroundMusic.playing() || this.isPlaying) {
+      if (this.backgroundMusic.playing()) {
         this.stopBackgroundMusic();
         return false;
       } else {
