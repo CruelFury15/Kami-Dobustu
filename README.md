@@ -27,7 +27,6 @@ A beautifully crafted interactive web experience that guides users through a mys
 - **Express.js Server**: RESTful API for spirit animal determination
 - **Gemini AI Integration**: Advanced AI analysis of user responses for personalized results
 - **Deep Personality Analysis**: Full paragraph analyzing decision-making patterns and emotional landscape
-- **Imagen 3 Support**: AI-generated mystical animal images with cosmic backgrounds
 - **Photorealistic 3D Images**: High-quality mystical artwork with cinematic lighting
 - **Environment Variables**: Secure API key management
 - **Fallback Logic**: Works offline with local algorithms and beautiful animated placeholders
@@ -92,14 +91,9 @@ cd ..
 
 4. Set up environment variables (optional - for AI features):
 ```bash
-# Create .env file in server directory
 cd server
 cp .env.example .env
-# Edit .env and add your API keys:
-# GEMINI_API_KEY=your_gemini_api_key_here
-# GOOGLE_CLOUD_PROJECT=your_project_id (for Imagen 3)
-# GOOGLE_CLOUD_LOCATION=your_location (for Imagen 3)
-```
+
 
 5. Start both frontend and backend:
 ```bash
@@ -109,10 +103,8 @@ npm run dev & cd server && npm start
 
 Or start them separately:
 ```bash
-# Terminal 1 - Frontend (from root)
 npm run dev
 
-# Terminal 2 - Backend (from server directory)
 cd server
 npm start
 ```
@@ -131,8 +123,6 @@ npm start
    GOOGLE_CLOUD_PROJECT=your_project_id
    GOOGLE_CLOUD_LOCATION=us-central1
    ```
-
-**Note**: The app works perfectly without API keys using beautiful mystical placeholders and fallback logic.
 
 ## 📁 Project Structure
 
@@ -199,13 +189,6 @@ kami-dobutsu/
 - Determines spirit animal compatibility
 - Selects from any real animal in nature (no limitations)
 
-### Imagen 3 Image Generation
-- Creates photorealistic 3D spirit animal images
-- Mystical cosmic environments with purple and gold nebula clouds
-- Soft glowing moonlight and ethereal mist
-- Stardust particles and magical atmosphere
-- Cinematic lighting and depth
-- Simplified prompts for better image quality
 
 ### Enhanced AI Response Format
 ```json
@@ -403,28 +386,6 @@ Contributions are welcome! Please feel free to submit issues and pull requests.
 - Keep functions small and focused
 - Add comments only when necessary for complex logic
 
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Audio not playing:**
-- Ensure user has interacted with the page (browser autoplay policy)
-- Check that audio files exist in `public/audios/`
-
-**Backend API errors:**
-- Verify server is running on port 3001
-- Check environment variables are set correctly
-- Ensure CORS is properly configured
-
-**AI features not working:**
-- Verify API keys in server/.env
-- Check Google Cloud project setup for Imagen 3
-- Review server logs for detailed error messages
-
-**Build issues:**
-- Clear node_modules and reinstall: `rm -rf node_modules && npm install`
-- Check Node.js version compatibility
-- Verify all dependencies are properly installed
 
 ## 📄 License
 
