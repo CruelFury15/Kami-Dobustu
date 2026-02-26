@@ -105,7 +105,7 @@ const Results = memo(() => {
         />
       ))}
 
-      <Motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ maxWidth: 'min(900px, 95%)', margin: '0 auto', position: 'relative', zIndex: 1 }}>
+      <Motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ maxWidth: 'min(900px, 95%)', margin: '0 auto', position: 'relative', zIndex: 5 }}>
         <Motion.div initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.8 }} style={{ textAlign: 'center', marginBottom: 'clamp(20px, 5vw, 40px)' }}>
           <SpiritAnimal3D animal={spiritAnimal.animal} element={spiritAnimal.element} imageUrl={spiritAnimal.imageUrl} />
           <Motion.h1 initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5, type: "spring", bounce: 0.5 }} style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', color: '#fcd34d', marginTop: 'clamp(20px, 5vw, 30px)', marginBottom: '10px', textShadow: '0 0 30px rgba(252, 211, 77, 0.8)', fontFamily: 'serif', fontWeight: 'bold' }}>{spiritAnimal.animal}</Motion.h1>
