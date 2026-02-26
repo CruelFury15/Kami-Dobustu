@@ -12,16 +12,15 @@ class AudioManager {
   }
 
   setupVisibilityListener() {
-    // Handle page visibility changes
+    
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
-        // Page is hidden, pause music
+        
         if (this.backgroundMusic && this.backgroundMusic.playing()) {
           this.backgroundMusic.pause();
           this.isPaused = true;
         }
       } else {
-        // Page is visible again, resume if it was playing
         if (this.backgroundMusic && this.isPaused && this.isPlaying) {
           this.backgroundMusic.play();
           this.isPaused = false;
@@ -29,7 +28,6 @@ class AudioManager {
       }
     });
 
-    // Handle page unload
     window.addEventListener('beforeunload', () => {
       this.cleanup();
     });
@@ -38,7 +36,7 @@ class AudioManager {
   init() {
     if (this.initialized) return;
     this.backgroundMusic = new Howl({
-      src: [new URL('../audios/lalaland.mp3', import.meta.url).href],
+      src: [new URL('../audios/Background_sound.mp3', import.meta.url).href],
       html5: false,
       loop: true,
       volume: 0.8,

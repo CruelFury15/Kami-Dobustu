@@ -8,7 +8,6 @@ function MusicControl() {
   const location = useLocation();
 
   useEffect(() => {
-    // Update state when audio manager changes
     const interval = setInterval(() => {
       setIsPlaying(audioManager.isMusicPlaying());
     }, 1000);
@@ -26,10 +25,8 @@ function MusicControl() {
     }
   };
 
-  // Show at top on Questions and Results pages, bottom on Home
   const isTopPosition = location.pathname === '/questions' || location.pathname === '/results';
   
-  // Hide on mobile when scrolling
   useEffect(() => {
     let scrollTimeout;
     const handleScroll = () => {
@@ -68,8 +65,6 @@ function MusicControl() {
     opacity: isVisible ? 1 : 0.3,
     transform: isVisible ? 'scale(1)' : 'scale(0.8)',
   };
-
-  // Position based on page
   if (isTopPosition) {
     buttonStyle.top = '20px';
     buttonStyle.right = '20px';
